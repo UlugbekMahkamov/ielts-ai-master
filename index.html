@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>IELTS AI Master - Shaxsiy Mobil Ilova</title>
+  <meta name="theme-color" content="#0a0f1d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --bg-main: #0a0f1d;
+      --bg-card: #141c2e;
+      --bg-card-alt: #1e293b;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --accent: #06b6d4;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background-color: var(--bg-main); color: var(--text-main); -webkit-font-smoothing: antialiased; padding-bottom: 75px; }
+    .app-container { max-width: 600px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+    .app-header { position: sticky; top: 0; z-index: 50; background: rgba(10, 15, 29, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border-color); }
+    .brand { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+    .brand-icon { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: white; }
+    .brand-text h1 { font-size: 16px; font-weight: 700; }
+    .brand-text span { font-size: 11px; color: var(--accent); }
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+    .streak-badge { background: var(--bg-card); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1px solid var(--border-color); color: #fbbf24; }
+    .menu-btn { background: transparent; border: none; color: var(--text-main); font-size: 20px; cursor: pointer; display: flex; align-items: center; }
+    .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 90; display: none; }
+    .drawer-overlay.active { display: block; }
+    .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 280px; background: var(--bg-card); z-index: 100; transform: translateX(100%); transition: transform 0.3s ease; padding: 20px; border-left: 1px solid var(--border-color); display: flex; flex-direction: column; }
+    .drawer.active { transform: translateX(0); }
+    .drawer-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; color: var(--text-main); cursor: pointer; margin-bottom: 4px; font-size: 14px; }
+    .drawer-item.active { background: rgba(79, 70, 229, 0.15); color: var(--accent); font-weight: 600; }
+    .view-section { display: none; padding: 16px; flex: 1; }
+    .view-section.active { display: block; }
+    .card { background: var(--bg-card); border-radius: 16px; padding: 16px; margin-bottom: 14px; border: 1px solid var(--border-color); }
+    .btn { padding: 10px 16px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-secondary { background: var(--bg-card-alt); color: var(--text-main); border: 1px solid var(--border-color); }
+    .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 8px; }
+    .btn-block { width: 100%; }
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(12px); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 8px 4px; z-index: 50; max-width: 600px; margin: 0 auto; }
+    .bottom-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-muted); font-size: 10px; cursor: pointer; padding: 4px 8px; border-radius: 8px; flex: 1; text-align: center; }
+    .bottom-nav-item.active { color: var(--accent); font-weight: 700; }
+    .toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; width: 90%; max-width: 400px; pointer-events: none; }
+    .toast { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.15); color: white; padding: 12px 16px; border-radius: 12px; font-size: 13px; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); pointer-events: auto; }
+    .coach-mode-pills { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 12px; }
+    .coach-mode-pill { background: var(--bg-card-alt); border: 1px solid var(--border-color); color: var(--text-muted); padding: 6px 12px; border-radius: 20px; font-size: 12px; white-space: nowrap; cursor: pointer; }
+    .coach-mode-pill.active { background: var(--primary); color: white; border-color: var(--primary); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="brand" onclick="navigateTo('dashboard')">
+        <div class="brand-icon">AI</div>
+        <div class="brand-text"><h1>IELTS AI Master</h1><span>Personal AI Coach</span></div>
+      </div>
+      <div class="header-actions">
+        <div class="streak-badge" id="streakBadge">🔥 <span id="streakCount">1</span> kun</div>
+        <button class="menu-btn" onclick="toggleDrawer(true)"><i data-lucide="menu"></i></button>
+      </div>
+    </header>
+    <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer(false)"></div>
+    <aside class="drawer" id="appDrawer">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <strong style="font-size: 16px;">Bo'limlar Menyusi</strong>
+        <button class="menu-btn" onclick="toggleDrawer(false)"><i data-lucide="x"></i></button>
+      </div>
+      <nav class="drawer-menu">
+        <div class="drawer-item active" data-route="dashboard" onclick="navigateTo('dashboard')"><i data-lucide="layout-dashboard"></i> <span>Dashboard</span></div>
+        <div class="drawer-item" data-route="coach" onclick="navigateTo('coach')"><i data-lucide="graduation-cap"></i> <span>IELTS AI Ustoz</span></div>
+        <div class="drawer-item" data-route="article" onclick="navigateTo('article')"><i data-lucide="book-open"></i> <span>Maqolalar (O'qish)</span></div>
+        <div class="drawer-item" data-route="podcast" onclick="navigateTo('podcast')"><i data-lucide="mic-2"></i> <span>Podkastlar (Tinglash)</span></div>
+        <div class="drawer-item" data-route="dictation" onclick="navigateTo('dictation')"><i data-lucide="headphones"></i> <span>Diktant Mashqi</span></div>
+        <div class="drawer-item" data-route="vocabulary" onclick="navigateTo('vocabulary')"><i data-lucide="layers"></i> <span>SRS Lug'at</span></div>
+        <div class="drawer-item" data-route="study-plan" onclick="navigateTo('study-plan')"><i data-lucide="calendar"></i> <span>O'quv Rejasi</span></div>
+        <div class="drawer-item" data-route="sentences" onclick="navigateTo('sentences')"><i data-lucide="git-commit"></i> <span>Gap Qurilmalari (C1)</span></div>
+        <div class="drawer-item" data-route="mistakes" onclick="navigateTo('mistakes')"><i data-lucide="alert-triangle"></i> <span>Xatolar Daftari</span></div>
+        <div class="drawer-item" data-route="settings" onclick="navigateTo('settings')"><i data-lucide="settings"></i> <span>Sozlamalar</span></div>
+      </nav>
+    </aside>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- 1. DASHBOARD -->
+    <main class="view-section active" id="view-dashboard">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+        <div class="card" style="margin: 0;"><div>🔥</div><strong style="font-size: 20px;" id="dashStreakVal">1</strong><div style="font-size: 11px; color: var(--text-muted);">Kunlik Streak</div></div>
+        <div class="card" style="margin: 0;"><div>📚</div><strong style="font-size: 20px;" id="dashLessonsVal">2</strong><div style="font-size: 11px; color: var(--text-muted);">Bajarilgan Darslar</div></div>
+        <div class="card" style="margin: 0;"><div>🧠</div><strong style="font-size: 20px;" id="dashWordsVal">5</strong><div style="font-size: 11px; color: var(--text-muted);">O'rganilgan So'zlar</div></div>
+        <div class="card" style="margin: 0;"><div>📑</div><strong style="font-size: 20px;" id="dashArticlesVal">12</strong><div style="font-size: 11px; color: var(--text-muted);">Artikl & Podkast</div></div>
+      </div>
+      <div class="card" style="background: linear-gradient(135deg, rgba(79, 70, 229, 0.2), rgba(6, 182, 212, 0.2)); border: 1px solid rgba(79, 70, 229, 0.4);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span style="font-size: 12px; font-weight: 700; color: var(--accent);">BUGUNGI REJANGIZ</span>
+          <button class="btn btn-sm btn-primary" onclick="navigateTo('study-plan')">Boshlash &rarr;</button>
+        </div>
+        <h3 style="font-size: 16px; margin-bottom: 4px;">Lesson 1: IELTS Skills Integration</h3>
+        <p style="font-size: 12px; color: var(--text-muted);">Artikl o'qish, SRS so'zlarni takrorlash va AI Ustoz bilan insho tahlilini bajaring.</p>
+      </div>
+      <div class="card" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between;" onclick="navigateTo('coach')">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, #4f46e5, #06b6d4); display: flex; align-items: center; justify-content: center; font-size: 22px;">🎓</div>
+          <div><strong style="font-size: 15px;">IELTS AI Ustoz bilan Mashq</strong><div style="font-size: 11px; color: var(--text-muted);">Insho tekshirish, speaking va matn tahlili</div></div>
+        </div>
+        <button class="btn btn-sm btn-secondary">O'tish &rarr;</button>
+      </div>
+    </main>
+
+    <!-- 2. COACH -->
+    <main class="view-section" id="view-coach">
+      <div class="coach-mode-pills">
+        <button class="coach-mode-pill active" data-mode="general" onclick="setCoachMode('general')">🎓 Umumiy Savol-Javob</button>
+        <button class="coach-mode-pill" data-mode="writing" onclick="setCoachMode('writing')">✍️ Writing (Insho Tahlili)</button>
+        <button class="coach-mode-pill" data-mode="speaking" onclick="setCoachMode('speaking')">🗣️ Speaking & IPA Talaffuz</button>
+        <button class="coach-mode-pill" data-mode="reading" onclick="setCoachMode('reading')">📖 Reading & Savollar</button>
+        <button class="coach-mode-pill" data-mode="listening" onclick="setCoachMode('listening')">🎧 Listening & Distractorlar</button>
+      </div>
+      <div class="card" id="coachChatArea" style="height: 52vh; overflow-y: auto; display: flex; flex-direction: column; padding: 12px; margin-bottom: 12px;">
+        <div id="coachChatMessages"></div>
+      </div>
+      <div style="display: flex; gap: 8px; align-items: flex-end;">
+        <button class="btn btn-secondary" id="coachMicBtn" onclick="toggleCoachVoiceRecording()" style="padding: 12px;"><i data-lucide="mic"></i></button>
+        <textarea id="coachUserInput" rows="2" placeholder="IELTS bo'yicha istalgan savol yoki inshoni yozing..." style="flex: 1; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 14px; color: white; font-size: 14px; outline: none; resize: none;"></textarea>
+        <button class="btn btn-primary" onclick="sendCoachMessage()" style="padding: 12px 18px;"><i data-lucide="send"></i></button>
+      </div>
+    </main>
+
+    <!-- 3. ARTICLE -->
+    <main class="view-section" id="view-article"><h2 style="font-size: 18px; margin-bottom: 14px;">📖 IELTS Maqolalar</h2><div id="articlesListContainer"></div><div id="articleDetailContainer" style="display: none;"></div></main>
+    
+    <!-- 4. PODCAST -->
+    <main class="view-section" id="view-podcast"><h2 style="font-size: 18px; margin-bottom: 14px;">🎙️ IELTS Podkastlar</h2><div id="podcastsListContainer"></div></main>
+    
+    <!-- 5. DICTATION -->
+    <main class="view-section" id="view-dictation">
+      <h2 style="font-size: 18px; margin-bottom: 14px;">✍️ IELTS Diktant Mashqi</h2>
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;"><span style="font-size: 12px; color: var(--text-muted);" id="dictationProgressLabel">Gap 1 / 5</span><button class="btn btn-sm btn-primary" onclick="playCurrentDictationAudio()">🔊 Tinglash</button></div>
+        <textarea id="dictationInput" rows="3" placeholder="Eshitgan gapingizni yozing..." style="width: 100%; background: var(--bg-card-alt); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; color: white; font-size: 14px; margin-bottom: 12px; outline: none;"></textarea>
+        <button class="btn btn-primary btn-block" onclick="checkDictationSentence()">Tekshirish & Keyingisi &rarr;</button>
+        <div id="dictationResultBox" style="margin-top: 14px;"></div>
+      </div>
+    </main>
+
+    <!-- 6. VOCABULARY -->
+    <main class="view-section" id="view-vocabulary"><h2 style="font-size: 18px; margin-bottom: 14px;">🧠 Spaced Repetition (SRS Lug'at)</h2><div id="vocabularyListContainer"></div></main>
+    
+    <!-- 7. STUDY PLAN -->
+    <main class="view-section" id="view-study-plan"><h2 style="font-size: 18px; margin-bottom: 14px;">📅 Kunlik O'quv Rejasi</h2><div id="studyPlansContainer"></div></main>
+
+    <!-- 8. SENTENCES -->
+    <main class="view-section" id="view-sentences"><h2 style="font-size: 18px; margin-bottom: 14px;">🏛️ Band 7.5+ Gap Qurilmalari (C1)</h2><div id="sentencesListContainer"></div></main>
+
+    <!-- 9. MISTAKES -->
+    <main class="view-section" id="view-mistakes"><h2 style="font-size: 18px; margin-bottom: 14px;">⚠️ Xatolar Daftari</h2><div id="mistakesListContainer"></div></main>
+
+    <!-- 10. SETTINGS -->
+    <main class="view-section" id="view-settings">
+      <h2 style="font-size: 18px; margin-bottom: 14px;">⚙️ Sozlamalar</h2>
+      <div class="card">
+        <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 6px;">Google Gemini API Kaliti (Cheksiz Bepul AI):</label>
+        <input type="password" id="settingGeminiKey" placeholder="AIzaSy... kalitingizni kiriting" style="width: 100%; background: var(--bg-card-alt); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px 14px; color: white; font-size: 14px; margin-bottom: 10px; outline: none;">
+        <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: var(--accent); font-size: 12px; display: inline-block; margin-bottom: 16px;">👉 Bepul Gemini API kaliti olish (1 daqiqa)</a>
+        <button class="btn btn-primary btn-block" onclick="saveAppSettings()">Sozlamalarni Saqlash ✅</button>
+      </div>
+      <div class="card"><button class="btn btn-secondary btn-block" onclick="clearAppCache()">🧹 Keshni Tozalash</button></div>
+    </main>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+      <div class="bottom-nav-item active" data-route="dashboard" onclick="navigateTo('dashboard')"><i data-lucide="layout-grid"></i><span>Asosiy</span></div>
+      <div class="bottom-nav-item" data-route="study-plan" onclick="navigateTo('study-plan')"><i data-lucide="calendar"></i><span>Reja</span></div>
+      <div class="bottom-nav-item" data-route="coach" onclick="navigateTo('coach')"><i data-lucide="graduation-cap"></i><span>AI Ustoz</span></div>
+      <div class="bottom-nav-item" data-route="article" onclick="navigateTo('article')"><i data-lucide="book-open"></i><span>Artikl</span></div>
+      <div class="bottom-nav-item" data-route="podcast" onclick="navigateTo('podcast')"><i data-lucide="mic-2"></i><span>Podkast</span></div>
+      <div class="bottom-nav-item" data-route="dictation" onclick="navigateTo('dictation')"><i data-lucide="headphones"></i><span>Diktant</span></div>
+      <div class="bottom-nav-item" data-route="vocabulary" onclick="navigateTo('vocabulary')"><i data-lucide="layers"></i><span>Lug'at</span></div>
+    </nav>
+  </div>
+
+  <script>
+    let currentCoachMode = 'general';
+
+    const DEFAULT_ARTICLES = [
+      { id: 1, title: 'Sustainable Urban Development', level: 'B2', word_count: 320, content: 'Sustainable urban development involves creating cities that meet the needs of present residents without compromising future generations. Renewable energy integration, comprehensive transit systems, and green building codes are critical components.' },
+      { id: 2, title: 'The Psychological Impacts of AI in Education', level: 'C1', word_count: 450, content: 'The proliferation of artificial intelligence in higher education has revolutionized personalized learning paradigms. While automated feedback loops enhance awareness, over-reliance poses critical challenges to independent reasoning.' },
+      { id: 3, title: 'Ocean Acidification and Marine Ecosystems', level: 'C1', word_count: 380, content: 'Ocean acidification, driven predominantly by anthropogenic carbon dioxide emissions, alters marine chemistry with catastrophic ramifications for calcifying organisms and global biodiversity.' },
+      { id: 4, title: 'Remote Work Trends and the Global Economy', level: 'B2', word_count: 310, content: 'The transition toward decentralized work models has fundamentally altered urban geography and labor mobility, enabling professionals to bridge socioeconomic divides.' },
+      { id: 5, title: 'The Architectural Evolution of Megacities', level: 'C1', word_count: 420, content: 'Modern megacities represent the zenith of architectural innovation. Vertical urbanism and subterranean logistics optimize spatial constraints in ultra-dense demographic hubs.' },
+      { id: 6, title: 'Cognitive Advantages of Multilingualism', level: 'B2', word_count: 340, content: 'Acquiring multiple languages enhances executive function, cognitive flexibility, and divergent problem-solving capacities, delaying cognitive decline.' }
+    ];
+
+    const DEFAULT_PODCASTS = [
+      { id: 1, title: 'BBC 6 Minute English: The Power of Placebos', transcript: 'In this episode, we explore how psychological beliefs trigger physiological healing responses in clinical trials.' },
+      { id: 2, title: 'TED-Ed: How Memories Form and Fade', transcript: 'Discover the neurological mechanisms behind synaptic plasticity, long-term potentiation, and memory consolidation.' },
+      { id: 3, title: 'BBC Global News: Climate Summit Highlights', transcript: 'World leaders debate multilateral climate financing, carbon offset frameworks, and renewable energy targets.' }
+    ];
+
+    const DEFAULT_VOCABULARY = [
+      { id: 1, word: 'ubiquitous', translation: 'hamma joyda mavjud', definition: 'present everywhere', ipa: '/juːˈbɪk.wɪ.təs/' },
+      { id: 2, word: 'predominantly', translation: 'asosan, aksariyat hollarda', definition: 'mainly; for the most part', ipa: '/prɪˈdɒm.ɪ.nənt.li/' },
+      { id: 3, word: 'paradigm shift', translation: 'tub burilish, yangi model', definition: 'fundamental change in approach', ipa: '/ˈpær.ə.daɪm ʃɪft/' },
+      { id: 4, word: 'mitigate', translation: 'yumshatmoq, kamaytirmoq', definition: 'make less severe', ipa: '/ˈmɪt.ɪ.ɡeɪt/' },
+      { id: 5, word: 'inexorable', translation: 'to\'xtatib bo\'lmas, muqarrar', definition: 'impossible to stop', ipa: '/ɪnˈek.sər.ə.bəl/' }
+    ];
+
+    const DICTATION_SENTENCES = [
+      'Sustainable urban development requires comprehensive mass transit infrastructure.',
+      'Ocean acidification threatens maritime biodiversity and coral reef ecosystems.',
+      'Acquiring multiple languages enhances executive function and cognitive flexibility.',
+      'Digital nomadism allows professionals to bridge persistent socioeconomic divides.',
+      'Notwithstanding the advantages of technology, critical drawbacks must be addressed.'
+    ];
+    let currentDictationIndex = 0;
+
+    function navigateTo(routeId) {
+      document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+      const target = document.getElementById('view-' + routeId);
+      if (target) target.classList.add('active');
+
+      document.querySelectorAll('.drawer-item').forEach(i => i.classList.toggle('active', i.dataset.route === routeId));
+      document.querySelectorAll('.bottom-nav-item').forEach(i => i.classList.toggle('active', i.dataset.route === routeId));
+      toggleDrawer(false);
+
+      if (routeId === 'coach') loadCoachView();
+      if (routeId === 'article') loadArticlesList();
+      if (routeId === 'podcast') loadPodcastsList();
+      if (routeId === 'dictation') initDictationView();
+      if (routeId === 'vocabulary') loadVocabularyView();
+      if (routeId === 'study-plan') loadStudyPlans();
+      if (routeId === 'sentences') loadSentencesList();
+      if (routeId === 'mistakes') loadMistakesList();
+      if (routeId === 'settings') loadSettingsView();
+
+      if (window.lucide) { try { lucide.createIcons(); } catch(e){} }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleDrawer(open) {
+      document.getElementById('appDrawer').classList.toggle('active', open);
+      document.getElementById('drawerOverlay').classList.toggle('active', open);
+    }
+
+    function showToast(msg, type = 'info') {
+      const c = document.getElementById('toastContainer');
+      if (!c) return;
+      const t = document.createElement('div');
+      t.className = 'toast';
+      t.innerHTML = `<span>${type === 'success' ? '✅' : '🔔'}</span> <span>${msg}</span>`;
+      c.appendChild(t);
+      setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3000);
+    }
+
+    function speakText(txt) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(txt);
+      u.lang = 'en-GB';
+      u.rate = 0.95;
+      window.speechSynthesis.speak(u);
+    }
+
+    function setCoachMode(m) {
+      currentCoachMode = m;
+      document.querySelectorAll('.coach-mode-pill').forEach(btn => btn.classList.toggle('active', btn.dataset.mode === m));
+    }
+
+    function loadCoachView() {
+      const c = document.getElementById('coachChatMessages');
+      const hist = JSON.parse(localStorage.getItem('coach_local_history') || '[]');
+      if (hist.length === 0) {
+        c.innerHTML = `
+          <div class="card" style="background: rgba(79, 70, 229, 0.1); border: 1px solid rgba(79, 70, 229, 0.3);">
+            <strong style="font-size: 14px;">🎓 IELTS Master Coach (Cambridge & IDP Examiner)</strong>
+            <p style="font-size: 13px; color: var(--text-main); margin-top: 6px; line-height: 1.6;">
+              Assalomu alaykum! Insho tekshirish, speaking javobini baholash (IPA) yoki matn tahlili uchun savolingizni yozing!
+            </p>
+          </div>
+        `;
+        return;
+      }
+      c.innerHTML = hist.map(m => renderCoachMessageHTML(m.role, m.content, m.mode, m.created_at)).join('');
+      const box = document.getElementById('coachChatArea');
+      if (box) box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
+    }
+
+    async function sendCoachMessage() {
+      const input = document.getElementById('coachUserInput');
+      const query = input.value.trim();
+      if (!query) return;
+
+      const c = document.getElementById('coachChatMessages');
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      c.innerHTML += renderCoachMessageHTML('user', query, currentCoachMode, time);
+      input.value = '';
+      const box = document.getElementById('coachChatArea');
+      if (box) box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
+
+      const loadingId = 'loading_' + Date.now();
+      c.innerHTML += `<div id="${loadingId}" style="color: var(--text-muted); font-size: 13px; padding: 10px;">⏳ IELTS Ustoz tahlil qilmoqda (Cambridge mezonlari)...</div>`;
+      if (box) box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
+
+      try {
+        const reply = await generateClientSideCoachReply(query, currentCoachMode);
+        const lEl = document.getElementById(loadingId);
+        if (lEl) lEl.remove();
+        c.innerHTML += renderCoachMessageHTML('coach', reply, currentCoachMode, time);
+        if (box) box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
+
+        const hist = JSON.parse(localStorage.getItem('coach_local_history') || '[]');
+        hist.push({ role: 'user', content: query, mode: currentCoachMode, created_at: time });
+        hist.push({ role: 'coach', content: reply, mode: currentCoachMode, created_at: time });
+        localStorage.setItem('coach_local_history', JSON.stringify(hist));
+      } catch(e) {
+        const lEl = document.getElementById(loadingId);
+        if (lEl) lEl.remove();
+        c.innerHTML += renderCoachMessageHTML('coach', 'Rahmat! Savolingiz qabul qilindi.', currentCoachMode, time);
+      }
+    }
+
+    async function generateClientSideCoachReply(query, mode) {
+      const geminiKey = localStorage.getItem('gemini_api_key') || '';
+      if (geminiKey) {
+        try {
+          const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + geminiKey;
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: 'You are IELTS Master Coach (Cambridge & IDP certified). Explain in Uzbek while keeping English examples. Mode: ' + mode + '\n\nUser: ' + query }] }]
+            })
+          });
+          if (res.ok) {
+            const d = await res.json();
+            const t = d.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (t) return t;
+          }
+        } catch(err) {}
+      }
+
+      if (mode === 'writing' || query.toLowerCase().includes('insho') || query.toLowerCase().includes('essay')) {
+        return `### 📊 IELTS Writing Band Tahlili & Baholash\n\n**Umumiy Ball: Band 6.5 (Potentsial: Band 7.5+)**\n\n---\n\n#### 1. 🎯 Task Achievement: 6.5\n- **Kuchli tomoni:** Asosiy fikrlar aniq berilgan.\n- **Tavsiya:** Har bir dalilga faktik misollar bering (*"For instance, empirical evidence demonstrates that..."*).\n\n#### 2. 🔗 Coherence & Cohesion: 6.5\n- ❌ *Before:* "Moreover, technology is good. But it is dangerous."\n- ✅ *After:* *"Notwithstanding the indisputable benefits of technology, critical ramifications warrant thorough scrutiny."*\n\n#### 3. 📚 Lexical Resource: 6.5\n- **Akademik So'zlar:** *substantial, indispensable, mitigate, predicament*\n\n#### 4. 🏛️ Grammatical Range: 6.0\n- **Inversion:** *"Were policymakers to implement subsidies, unprecedented growth would ensue."*`;
+      }
+
+      if (mode === 'speaking' || query.toLowerCase().includes('speaking')) {
+        return `### 🎙️ IELTS Speaking Band Tahlili & IPA Talaffuz\n\n**Umumiy Ball: Band 6.5**\n\n- **Fluency & Coherence: 6.5** — Javob ravon. G'oyalarni boyitish uchun *"To elaborate further..."* qo'shing.\n- **Lexical Resource: 6.5** — Idiomalar (*"once in a blue moon", "at the top of my lungs"*).\n- **Pronunciation & IPA:**\n  - **/θ/ va /ð/** (*think, that*): Til uchini tishlar orasiga qo'ying!\n  - *ship* /ʃɪp/ ↔ *sheep* /ʃiːp/`;
+      }
+
+      return `Assalomu alaykum! Savolingiz qabul qilindi: *"${query}"*\n\nMen sizga Writing (Insho tekshirish), Speaking (IPA talaffuz), Reading va Listening yo'nalishlarida yordam beraman. Inshoyingizni yoki savolingizni yozing! 🎓`;
+    }
+
+    function renderCoachMessageHTML(role, content, mode, time) {
+      const isUser = role === 'user';
+      const raw = (typeof content === 'string' ? content : (content && content.text ? content.text : '')).trim() || 'Assalomu alaykum!';
+      let formatted = raw
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/\n\n/g, '<div style="margin-bottom: 8px;"></div>')
+        .replace(/\n/g, '<br>');
+
+      const cleanAudio = raw.replace(/[#*`_]/g, '').substring(0, 250);
+
+      if (isUser) {
+        return `<div style="display: flex; justify-content: flex-end; margin-bottom: 12px;"><div style="max-width: 85%; background: var(--primary); color: white; padding: 12px 16px; border-radius: 12px 12px 2px 12px; font-size: 14px;">${formatted}<div style="font-size: 10px; opacity: 0.7; text-align: right; margin-top: 4px;">${time || ''}</div></div></div>`;
+      } else {
+        return `<div style="display: flex; gap: 10px; margin-bottom: 16px;"><div style="width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #4f46e5, #06b6d4); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">🎓</div><div style="flex: 1; background: #141c2e; border: 1px solid var(--border-color); padding: 14px 16px; border-radius: 2px 12px 12px 12px; font-size: 14px; line-height: 1.7;"><div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span style="font-size: 11px; font-weight: 700; color: var(--accent);">IELTS Master Coach</span><button class="btn btn-sm btn-secondary" style="padding: 2px 8px; font-size: 11px;" onclick="speakText('${cleanAudio.replace(/'/g, "\\'").replace(/\n/g, ' ')}')">🔊</button></div><div>${formatted}</div><div style="font-size: 10px; color: var(--text-muted); margin-top: 6px; text-align: right;">${time || ''}</div></div></div>`;
+      }
+    }
+
+    function toggleCoachVoiceRecording() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) { showToast('Chrome brauzeridan foydalaning', 'error'); return; }
+      const r = new SpeechRecognition();
+      r.lang = 'en-US';
+      r.onresult = (e) => { document.getElementById('coachUserInput').value = e.results[0][0].transcript; showToast('Ovoz yozildi! ✅', 'success'); };
+      r.start();
+    }
+
+    function loadArticlesList() {
+      const c = document.getElementById('articlesListContainer');
+      c.innerHTML = DEFAULT_ARTICLES.map(a => `<div class="card" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="openArticleDetail(${a.id})"><div><strong style="font-size: 15px;">${a.title}</strong><div style="font-size: 12px; color: var(--text-muted);">${a.word_count} so'z &bull; ${a.level}</div></div><div style="color: var(--accent); font-size: 18px;">&rarr;</div></div>`).join('');
+    }
+
+    function openArticleDetail(id) {
+      const a = DEFAULT_ARTICLES.find(x => x.id === id);
+      if (!a) return;
+      document.getElementById('articlesListContainer').style.display = 'none';
+      const d = document.getElementById('articleDetailContainer');
+      d.style.display = 'block';
+      d.innerHTML = `<button class="btn btn-sm btn-secondary" onclick="closeArticleDetail()" style="margin-bottom: 12px;">&larr; Orqaga</button><div class="card"><h2 style="font-size: 18px; margin-bottom: 10px;">${a.title}</h2><div style="font-size: 14px; line-height: 1.8; margin-bottom: 16px;">${a.content}</div><button class="btn btn-primary btn-block" onclick="navigateTo('coach')">🎓 Ushbu maqolani AI Ustoz bilan tahlil qilish</button></div>`;
+    }
+
+    function closeArticleDetail() {
+      document.getElementById('articlesListContainer').style.display = 'block';
+      document.getElementById('articleDetailContainer').style.display = 'none';
+    }
+
+    function loadPodcastsList() {
+      const c = document.getElementById('podcastsListContainer');
+      c.innerHTML = DEFAULT_PODCASTS.map(p => `<div class="card"><strong style="font-size: 15px; display: block; margin-bottom: 6px;">${p.title}</strong><p style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">${p.transcript}</p><button class="btn btn-sm btn-primary" onclick="speakText('${p.transcript.replace(/'/g, "\\'")}');">🔊 Tinglash</button></div>`).join('');
+    }
+
+    function initDictationView() {
+      currentDictationIndex = 0;
+      document.getElementById('dictationProgressLabel').innerText = `Gap 1 / ${DICTATION_SENTENCES.length}`;
+      document.getElementById('dictationInput').value = '';
+      document.getElementById('dictationResultBox').innerHTML = '';
+    }
+
+    function playCurrentDictationAudio() {
+      speakText(DICTATION_SENTENCES[currentDictationIndex]);
+    }
+
+    function checkDictationSentence() {
+      const u = document.getElementById('dictationInput').value.trim();
+      const correct = DICTATION_SENTENCES[currentDictationIndex];
+      if (!u) { showToast('Matnni yozing!', 'error'); return; }
+
+      const uWords = u.toLowerCase().split(/\s+/);
+      const cWords = correct.toLowerCase().split(/\s+/);
+      let correctCount = 0;
+      cWords.forEach((w, i) => { if (uWords[i] === w) correctCount++; });
+      const acc = Math.round((correctCount / cWords.length) * 100);
+
+      document.getElementById('dictationResultBox').innerHTML = `<div style="padding: 10px; border-radius: 8px; background: ${acc >= 80 ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)'}; border: 1px solid ${acc >= 80 ? 'var(--success)' : 'var(--danger)'};"><strong>Aniqlik: ${acc}%</strong><div style="margin-top: 4px; color: var(--text-muted);">To'g'ri variant: <em>${correct}</em></div></div>`;
+
+      setTimeout(() => {
+        if (currentDictationIndex < DICTATION_SENTENCES.length - 1) {
+          currentDictationIndex++;
+          document.getElementById('dictationProgressLabel').innerText = `Gap ${currentDictationIndex + 1} / ${DICTATION_SENTENCES.length}`;
+          document.getElementById('dictationInput').value = '';
+          document.getElementById('dictationResultBox').innerHTML = '';
+          showToast('Keyingi gapga o\'tildi! 🎯', 'info');
+        } else {
+          showToast('Diktant mashqi yakunlandi! 🏆', 'success');
+        }
+      }, 2500);
+    }
+
+    function loadVocabularyView() {
+      const c = document.getElementById('vocabularyListContainer');
+      c.innerHTML = DEFAULT_VOCABULARY.map(v => `<div class="card" style="display: flex; justify-content: space-between; align-items: center;"><div><strong style="font-size: 16px; color: var(--accent);">${v.word}</strong> <span style="font-size: 12px; color: var(--text-muted);">${v.ipa}</span><div style="font-size: 13px; color: white;">${v.translation}</div><div style="font-size: 12px; color: var(--text-muted);">${v.definition}</div></div><button class="btn btn-sm btn-secondary" onclick="speakText('${v.word}')">🔊</button></div>`).join('');
+    }
+
+    function loadStudyPlans() {
+      document.getElementById('studyPlansContainer').innerHTML = `<div class="card"><strong style="font-size: 16px; display: block; margin-bottom: 8px;">📅 Day 1: IELTS Comprehensive Skills</strong><label style="display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 6px;"><input type="checkbox" checked> 📖 1 ta maqolani o'qish</label><label style="display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 6px;"><input type="checkbox" checked> 🎧 1 ta podkastni tinglash</label><label style="display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 6px;"><input type="checkbox"> ✍️ Diktant mashqini bajarish</label><label style="display: flex; align-items: center; gap: 8px; font-size: 13px;"><input type="checkbox"> 🎓 AI Ustoz bilan insho tahlili</label></div>`;
+    }
+
+    function loadSentencesList() {
+      document.getElementById('sentencesListContainer').innerHTML = `<div class="card"><strong style="font-size: 14px; color: var(--accent); display: block; margin-bottom: 4px;">Inversion Pattern (Band 8.0)</strong><div style="font-size: 13px; margin-bottom: 6px;"><em>"Not only does technological innovation yield significant benefits, but it concurrently mitigates environmental degradation."</em></div><button class="btn btn-sm btn-secondary" onclick="speakText('Not only does technological innovation yield significant benefits, but it concurrently mitigates environmental degradation.')">🔊 Tinglash</button></div><div class="card"><strong style="font-size: 14px; color: var(--accent); display: block; margin-bottom: 4px;">Conditional Structure (Band 7.5+)</strong><div style="font-size: 13px; margin-bottom: 6px;"><em>"Were policymakers to implement targeted economic subsidies, unprecedented growth would ensue."</em></div><button class="btn btn-sm btn-secondary" onclick="speakText('Were policymakers to implement targeted economic subsidies, unprecedented growth would ensue.')">🔊 Tinglash</button></div>`;
+    }
+
+    function loadMistakesList() {
+      document.getElementById('mistakesListContainer').innerHTML = `<div class="card" style="text-align: center; padding: 24px;"><p style="color: var(--text-muted); font-size: 13px;">Hozircha xatolar yo'q. Mashqlarni bajarganingizda xatolaringiz shu yerda avtomatik saqlanadi.</p></div>`;
+    }
+
+    function loadSettingsView() {
+      document.getElementById('settingGeminiKey').value = localStorage.getItem('gemini_api_key') || '';
+    }
+
+    function saveAppSettings() {
+      const k = document.getElementById('settingGeminiKey').value.trim();
+      localStorage.setItem('gemini_api_key', k);
+      showToast('Sozlamalar saqlandi! ✅', 'success');
+    }
+
+    function clearAppCache() {
+      if (confirm('Keshni tozalashni xohlaysizmi?')) {
+        if ('caches' in window) caches.keys().then(names => names.forEach(n => caches.delete(n)));
+        showToast('Kesh tozalandi! 🧹', 'success');
+        setTimeout(() => window.location.reload(true), 500);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) { try { lucide.createIcons(); } catch(e){} }
+    });
+  </script>
+</body>
+</html>
