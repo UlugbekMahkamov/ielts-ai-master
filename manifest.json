@@ -1,0 +1,15 @@
+{
+  "name": "IELTS AI Master",
+  "short_name": "IELTS AI",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0a0f1d",
+  "theme_color": "#0a0f1d",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3413/3413535.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
