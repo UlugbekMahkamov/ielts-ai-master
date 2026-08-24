@@ -1,4 +1,4 @@
-# IELTS AI Master - Cloudflare Pages & Mobile PWA
+# IELTS AI Master - Cloudflare Pages & Mobile PWA BY ULUGBEK
 
 Faqat o'zingiz uchun mo'ljallangan, Cambridge va IDP standartlari asosidagi to'liq dinamik AI-powered IELTS mobil ilovasi.
 
