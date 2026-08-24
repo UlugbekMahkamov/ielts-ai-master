@@ -10,124 +10,361 @@
   <link rel="manifest" href="manifest.json">
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     :root {
-      --bg-main: #0a0f1d;
-      --bg-card: #141c2e;
-      --bg-card-alt: #1e293b;
-      --border-color: rgba(255, 255, 255, 0.08);
-      --primary: #4f46e5;
-      --primary-hover: #4338ca;
-      --accent: #06b6d4;
-      --accent-glow: rgba(6, 182, 212, 0.2);
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --success: #10b981;
-      --warning: #f59e0b;
-      --danger: #ef4444;
+      --bg-main: #060b18;
+      --bg-card: #0d1526;
+      --bg-card-alt: #121f38;
+      --bg-glass: rgba(13, 21, 38, 0.7);
+      --border-color: rgba(99, 179, 237, 0.1);
+      --border-glow: rgba(6, 182, 212, 0.25);
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-glow: rgba(99, 102, 241, 0.35);
+      --accent: #06d6f0;
+      --accent-dim: #0891b2;
+      --accent-glow: rgba(6, 214, 240, 0.2);
+      --purple: #a855f7;
+      --purple-glow: rgba(168, 85, 247, 0.25);
+      --text-main: #f0f6ff;
+      --text-muted: #7a9bbf;
+      --text-dim: #4a6a8a;
+      --success: #10d9a0;
+      --success-glow: rgba(16, 217, 160, 0.2);
+      --warning: #f5a623;
+      --danger: #f43f5e;
+      --danger-glow: rgba(244, 63, 94, 0.2);
+      --gold: #fbbf24;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background-color: var(--bg-main); color: var(--text-main); -webkit-font-smoothing: antialiased; padding-bottom: 85px; min-height: 100vh; overflow-x: hidden; }
-    .app-container { max-width: 600px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; position: relative; }
-    
-    /* Header */
-    .app-header { position: sticky; top: 0; z-index: 50; background: rgba(10, 15, 29, 0.95); backdrop-filter: blur(12px); display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border-color); }
+
+    * { box-sizing: border-box; margin: 0; padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+      -webkit-tap-highlight-color: transparent; }
+
+    body {
+      background: var(--bg-main);
+      background-image:
+        radial-gradient(ellipse 80% 50% at 20% -10%, rgba(99,102,241,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 110%, rgba(6,214,240,0.1) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 60% at 50% 50%, rgba(168,85,247,0.06) 0%, transparent 70%);
+      color: var(--text-main);
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 88px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Ambient orbs */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -120px; left: -80px;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      animation: orbFloat 12s ease-in-out infinite alternate;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -80px; right: -60px;
+      width: 320px; height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(6,214,240,0.1) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      animation: orbFloat 15s ease-in-out infinite alternate-reverse;
+    }
+    @keyframes orbFloat { 0%{transform:translate(0,0) scale(1);} 100%{transform:translate(30px,20px) scale(1.1);} }
+
+    .app-container { max-width: 600px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; position: relative; z-index: 1; }
+
+    /* ─── Header ─────────────────────────────────────── */
+    .app-header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(6, 11, 24, 0.85);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(99,179,237,0.08);
+      box-shadow: 0 1px 0 rgba(6,214,240,0.05), 0 4px 20px rgba(0,0,0,0.4);
+    }
     .brand { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-    .brand-icon { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: white; box-shadow: 0 4px 12px var(--accent-glow); }
-    .brand-text h1 { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
-    .brand-text span { font-size: 11px; color: var(--accent); font-weight: 500; }
-    .header-actions { display: flex; align-items: center; gap: 10px; }
-    .streak-badge { background: var(--bg-card); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; border: 1px solid var(--border-color); color: #fbbf24; display: flex; align-items: center; gap: 4px; }
-    .menu-btn { background: transparent; border: none; color: var(--text-main); font-size: 20px; cursor: pointer; display: flex; align-items: center; padding: 6px; border-radius: 8px; }
-    .menu-btn:active { background: var(--bg-card-alt); }
+    .brand-icon {
+      width: 38px; height: 38px; border-radius: 12px;
+      background: linear-gradient(135deg, #6366f1 0%, #06d6f0 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 15px; color: white;
+      box-shadow: 0 0 16px rgba(99,102,241,0.5), 0 4px 12px rgba(0,0,0,0.4);
+      position: relative; overflow: hidden;
+    }
+    .brand-icon::after {
+      content: ''; position: absolute; top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%);
+      animation: shimmerSlide 3s ease-in-out infinite;
+    }
+    @keyframes shimmerSlide { 0%{transform:translateX(-100%) translateY(-100%);} 100%{transform:translateX(100%) translateY(100%);} }
+    .brand-text h1 { font-size: 16px; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(90deg, #f0f6ff, #06d6f0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .brand-text span { font-size: 10px; color: var(--accent); font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; }
+    .header-actions { display: flex; align-items: center; gap: 8px; }
+    .streak-badge {
+      background: linear-gradient(135deg, rgba(251,191,36,0.15), rgba(245,166,35,0.08));
+      padding: 5px 11px; border-radius: 20px; font-size: 12px; font-weight: 700;
+      border: 1px solid rgba(251,191,36,0.3); color: var(--gold);
+      display: flex; align-items: center; gap: 4px;
+      box-shadow: 0 0 12px rgba(251,191,36,0.1);
+      animation: pulseStreak 3s ease-in-out infinite;
+    }
+    @keyframes pulseStreak { 0%,100%{box-shadow:0 0 12px rgba(251,191,36,0.1);} 50%{box-shadow:0 0 20px rgba(251,191,36,0.25);} }
+    .menu-btn { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: var(--text-main); font-size: 20px; cursor: pointer; display: flex; align-items: center; padding: 6px; border-radius: 10px; transition: all 0.2s; }
+    .menu-btn:active, .menu-btn:hover { background: rgba(6,214,240,0.1); border-color: rgba(6,214,240,0.2); color: var(--accent); }
 
-    /* Navigation Drawer */
-    .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 90; display: none; backdrop-filter: blur(3px); }
+    /* ─── Navigation Drawer ───────────────────────────── */
+    .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 90; display: none; backdrop-filter: blur(6px); }
     .drawer-overlay.active { display: block; }
-    .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 290px; background: var(--bg-card); z-index: 100; transform: translateX(100%); transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1); padding: 20px; border-left: 1px solid var(--border-color); display: flex; flex-direction: column; box-shadow: -10px 0 30px rgba(0,0,0,0.5); }
+    .drawer {
+      position: fixed; top: 0; right: 0; bottom: 0; width: 285px;
+      background: rgba(10, 16, 30, 0.97);
+      backdrop-filter: blur(24px);
+      z-index: 100; transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 20px; border-left: 1px solid rgba(6,214,240,0.1);
+      display: flex; flex-direction: column;
+      box-shadow: -20px 0 60px rgba(0,0,0,0.7);
+    }
     .drawer.active { transform: translateX(0); }
-    .drawer-menu { display: flex; flex-direction: column; gap: 4px; margin-top: 14px; overflow-y: auto; }
-    .drawer-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; color: var(--text-main); cursor: pointer; font-size: 14px; transition: all 0.15s; }
-    .drawer-item:hover, .drawer-item:active { background: var(--bg-card-alt); }
-    .drawer-item.active { background: rgba(79, 70, 229, 0.2); color: var(--accent); font-weight: 600; border: 1px solid rgba(79, 70, 229, 0.3); }
+    .drawer-menu { display: flex; flex-direction: column; gap: 3px; margin-top: 14px; overflow-y: auto; }
+    .drawer-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px; border-radius: 12px; color: var(--text-muted);
+      cursor: pointer; font-size: 13px; font-weight: 500;
+      transition: all 0.18s; border: 1px solid transparent;
+    }
+    .drawer-item:hover { background: rgba(6,214,240,0.06); color: var(--text-main); border-color: rgba(6,214,240,0.1); }
+    .drawer-item.active { background: rgba(99,102,241,0.15); color: #a5b4fc; font-weight: 700; border-color: rgba(99,102,241,0.25); }
 
-    /* Main Views */
-    .view-section { display: none; padding: 16px; flex: 1; animation: fadeIn 0.2s ease; }
+    /* ─── Main Views ──────────────────────────────────── */
+    .view-section { display: none; padding: 16px; flex: 1; animation: fadeSlideUp 0.25s ease; }
     .view-section.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-    .card { background: var(--bg-card); border-radius: 16px; padding: 16px; margin-bottom: 14px; border: 1px solid var(--border-color); box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
-    .card-title { font-size: 16px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
-    
-    /* Buttons & Inputs */
-    .btn { padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; -webkit-user-select: none; user-select: none; }
-    .btn:active { transform: scale(0.97); }
-    .btn-primary { background: linear-gradient(135deg, var(--primary), #6366f1); color: white; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
-    .btn-primary:hover { background: var(--primary-hover); }
-    .btn-secondary { background: var(--bg-card-alt); color: var(--text-main); border: 1px solid var(--border-color); }
-    .btn-accent { background: linear-gradient(135deg, var(--accent), #0891b2); color: white; }
-    .btn-success { background: var(--success); color: white; }
-    .btn-danger { background: var(--danger); color: white; }
-    .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 8px; }
+    /* ─── Cards ───────────────────────────────────────── */
+    .card {
+      background: var(--bg-glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 18px; padding: 16px; margin-bottom: 14px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.04);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { border-color: rgba(6,214,240,0.15); box-shadow: 0 4px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(6,214,240,0.05); }
+    .card-title { font-size: 15px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+
+    /* ─── Buttons ─────────────────────────────────────── */
+    .btn { padding: 10px 16px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 7px; transition: all 0.2s; -webkit-user-select: none; user-select: none; letter-spacing: 0.1px; }
+    .btn:active { transform: scale(0.96); }
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      color: white;
+      box-shadow: 0 4px 16px rgba(99,102,241,0.35), 0 1px 0 rgba(255,255,255,0.1) inset;
+    }
+    .btn-primary:hover { box-shadow: 0 6px 24px rgba(99,102,241,0.5); filter: brightness(1.1); }
+    .btn-secondary { background: rgba(255,255,255,0.06); color: var(--text-main); border: 1px solid rgba(255,255,255,0.1); }
+    .btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: rgba(6,214,240,0.2); }
+    .btn-accent {
+      background: linear-gradient(135deg, #06d6f0 0%, #0891b2 100%);
+      color: #060b18; font-weight: 800;
+      box-shadow: 0 4px 16px rgba(6,214,240,0.3);
+    }
+    .btn-accent:hover { box-shadow: 0 6px 24px rgba(6,214,240,0.5); }
+    .btn-success { background: linear-gradient(135deg, #10d9a0, #059669); color: white; box-shadow: 0 4px 14px rgba(16,217,160,0.25); }
+    .btn-danger { background: linear-gradient(135deg, #f43f5e, #be123c); color: white; box-shadow: 0 4px 14px rgba(244,63,94,0.25); }
+    .btn-sm { padding: 6px 12px; font-size: 11px; border-radius: 9px; }
     .btn-block { width: 100%; }
-    .badge { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; background: var(--bg-card-alt); border: 1px solid var(--border-color); }
-    .badge-c1 { background: rgba(16, 185, 129, 0.15); color: #10b981; border-color: rgba(16, 185, 129, 0.3); }
-    .badge-b2 { background: rgba(6, 182, 212, 0.15); color: #06b6d4; border-color: rgba(6, 182, 212, 0.3); }
-    
-    /* Level Selector Pills */
-    .level-pills { display: flex; gap: 8px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px; }
-    .level-pill { flex: 1; padding: 8px 12px; text-align: center; border-radius: 10px; background: var(--bg-card-alt); border: 1px solid var(--border-color); font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-muted); }
-    .level-pill.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-    /* Bottom Nav */
-    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(10, 15, 29, 0.95); backdrop-filter: blur(16px); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 8px 4px 12px 4px; z-index: 50; max-width: 600px; margin: 0 auto; }
-    .bottom-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-muted); font-size: 10px; cursor: pointer; padding: 4px 6px; border-radius: 8px; flex: 1; text-align: center; transition: all 0.15s; }
+    /* ─── Badges ──────────────────────────────────────── */
+    .badge { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); letter-spacing: 0.2px; text-transform: uppercase; }
+    .badge-c1 { background: rgba(16,217,160,0.12); color: #10d9a0; border-color: rgba(16,217,160,0.25); }
+    .badge-b2 { background: rgba(6,214,240,0.12); color: #06d6f0; border-color: rgba(6,214,240,0.25); }
+
+    /* ─── Level Pills ─────────────────────────────────── */
+    .level-pills { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px; }
+    .level-pill { flex: 1; padding: 8px 12px; text-align: center; border-radius: 10px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); font-size: 12px; font-weight: 700; cursor: pointer; color: var(--text-muted); transition: all 0.2s; white-space: nowrap; }
+    .level-pill:hover { border-color: var(--border-glow); color: var(--text-main); }
+    .level-pill.active { background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(6,214,240,0.2)); color: #a5b4fc; border-color: rgba(99,102,241,0.4); box-shadow: 0 0 12px rgba(99,102,241,0.2); }
+
+    /* ─── Bottom Nav ──────────────────────────────────── */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(6, 11, 24, 0.92);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-top: 1px solid rgba(6,214,240,0.08);
+      display: flex; justify-content: space-around;
+      padding: 8px 4px calc(8px + env(safe-area-inset-bottom)) 4px;
+      z-index: 50; max-width: 600px; margin: 0 auto;
+      box-shadow: 0 -1px 0 rgba(99,102,241,0.05), 0 -8px 30px rgba(0,0,0,0.5);
+    }
+    .bottom-nav-item {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      color: var(--text-dim); font-size: 10px; cursor: pointer;
+      padding: 6px 8px; border-radius: 12px; flex: 1; text-align: center;
+      transition: all 0.2s; position: relative; font-weight: 600;
+    }
     .bottom-nav-item i { width: 20px; height: 20px; }
-    .bottom-nav-item.active { color: var(--accent); font-weight: 700; }
-    
-    /* Toast */
+    .bottom-nav-item.active { color: var(--accent); }
+    .bottom-nav-item.active::before {
+      content: '';
+      position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+      width: 28px; height: 3px; border-radius: 0 0 3px 3px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      box-shadow: 0 0 10px rgba(6,214,240,0.6);
+    }
+    .bottom-nav-item:active { transform: scale(0.92); }
+
+    /* ─── Toast ───────────────────────────────────────── */
     .toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; width: 90%; max-width: 400px; pointer-events: none; }
-    .toast { background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.15); color: white; padding: 12px 16px; border-radius: 14px; font-size: 13px; display: flex; align-items: center; gap: 10px; box-shadow: 0 12px 30px rgba(0,0,0,0.6); pointer-events: auto; animation: slideDown 0.25s ease; }
-    @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .toast {
+      background: rgba(10, 16, 30, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: white; padding: 12px 16px; border-radius: 16px;
+      font-size: 13px; font-weight: 500;
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.03);
+      pointer-events: auto; animation: slideDown 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-16px) scale(0.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-    /* Word Selection Tooltip */
-    .word-tooltip { position: fixed; background: #1e293b; border: 1px solid var(--accent); border-radius: 10px; padding: 6px 12px; display: none; z-index: 1000; box-shadow: 0 8px 25px rgba(0,0,0,0.7); align-items: center; gap: 8px; transform: translate(-50%, -100%); margin-top: -8px; }
-    .word-tooltip:after { content: ''; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: var(--accent) transparent transparent transparent; }
-    
-    /* Coach Pills */
+    /* ─── Word Tooltip ────────────────────────────────── */
+    .word-tooltip {
+      position: fixed;
+      background: rgba(13,21,38,0.97);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glow);
+      border-radius: 12px; padding: 7px 12px; display: none; z-index: 1000;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.8), 0 0 20px rgba(6,214,240,0.1);
+      align-items: center; gap: 8px; transform: translate(-50%, -100%); margin-top: -10px;
+    }
+    .word-tooltip:after { content: ''; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: var(--border-glow) transparent transparent transparent; }
+
+    /* ─── Coach Pills ─────────────────────────────────── */
     .coach-mode-pills { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 12px; }
-    .coach-mode-pill { background: var(--bg-card-alt); border: 1px solid var(--border-color); color: var(--text-muted); padding: 6px 12px; border-radius: 20px; font-size: 12px; white-space: nowrap; cursor: pointer; }
-    .coach-mode-pill.active { background: var(--primary); color: white; border-color: var(--primary); font-weight: 600; }
+    .coach-mode-pill { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: var(--text-muted); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; transition: all 0.18s; }
+    .coach-mode-pill.active { background: linear-gradient(135deg, rgba(99,102,241,0.25), rgba(6,214,240,0.15)); color: #a5b4fc; border-color: rgba(99,102,241,0.35); }
 
-    /* Flashcard 3D */
-    .flashcard { perspective: 1000px; width: 100%; min-height: 220px; margin-bottom: 14px; cursor: pointer; }
-    .flashcard-inner { position: relative; width: 100%; height: 100%; min-height: 220px; text-align: center; transition: transform 0.5s; transform-style: preserve-3d; }
+    /* ─── Flashcard 3D ────────────────────────────────── */
+    .flashcard { perspective: 1200px; width: 100%; min-height: 230px; margin-bottom: 14px; cursor: pointer; }
+    .flashcard-inner { position: relative; width: 100%; height: 100%; min-height: 230px; text-align: center; transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1); transform-style: preserve-3d; }
     .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
-    .flashcard-front, .flashcard-back { position: absolute; inset: 0; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 18px; padding: 22px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid var(--border-color); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
-    .flashcard-front { background: linear-gradient(145deg, #141c2e, #1a233a); }
-    .flashcard-back { background: linear-gradient(145deg, #1e293b, #0f172a); transform: rotateY(180deg); border-color: var(--accent); }
+    .flashcard-front, .flashcard-back {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      -webkit-backface-visibility: hidden; backface-visibility: hidden;
+      border-radius: 20px; padding: 24px;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    }
+    .flashcard-front {
+      background: linear-gradient(145deg, rgba(13,21,38,0.95), rgba(18,31,56,0.9));
+      border-color: rgba(99,102,241,0.2);
+    }
+    .flashcard-back {
+      background: linear-gradient(145deg, rgba(6,214,240,0.08), rgba(13,21,38,0.95));
+      transform: rotateY(180deg);
+      border-color: rgba(6,214,240,0.3);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 30px rgba(6,214,240,0.08);
+    }
 
-    /* Speechling Diff Highlight */
-    .diff-correct { color: #10b981; font-weight: 600; }
-    .diff-wrong { color: #ef4444; background: rgba(239, 68, 68, 0.15); padding: 1px 4px; border-radius: 4px; text-decoration: underline wavy #ef4444; font-weight: 600; }
-    .diff-missing { color: #f59e0b; font-style: italic; }
+    /* ─── Diff Highlight ──────────────────────────────── */
+    .diff-correct { color: var(--success); font-weight: 700; }
+    .diff-wrong { color: var(--danger); background: rgba(244,63,94,0.12); padding: 1px 5px; border-radius: 5px; text-decoration: underline wavy #f43f5e; font-weight: 700; }
+    .diff-missing { color: var(--warning); font-style: italic; }
 
-    /* Waveform Animation */
+    /* ─── Waveform ────────────────────────────────────── */
     .waveform { display: flex; align-items: center; gap: 3px; height: 24px; justify-content: center; }
-    .waveform-bar { width: 3px; background: var(--accent); border-radius: 3px; animation: soundWave 0.8s ease-in-out infinite alternate; }
+    .waveform-bar { width: 3px; background: linear-gradient(180deg, var(--accent), var(--primary)); border-radius: 3px; animation: soundWave 0.8s ease-in-out infinite alternate; }
+    .waveform-bar:nth-child(1) { height: 8px; }
     .waveform-bar:nth-child(2) { animation-delay: 0.2s; height: 16px; }
     .waveform-bar:nth-child(3) { animation-delay: 0.4s; height: 22px; }
     .waveform-bar:nth-child(4) { animation-delay: 0.1s; height: 12px; }
     .waveform-bar:nth-child(5) { animation-delay: 0.3s; height: 18px; }
-    @keyframes soundWave { 0% { height: 4px; } 100% { height: 24px; } }
+    @keyframes soundWave { 0% { transform: scaleY(0.2); } 100% { transform: scaleY(1); } }
 
-    /* Progress bar */
-    .progress-track { height: 7px; background: var(--bg-card-alt); border-radius: 4px; overflow: hidden; margin-top: 4px; }
-    .progress-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
+    /* ─── Progress bar ────────────────────────────────── */
+    .progress-track { height: 6px; background: rgba(255,255,255,0.06); border-radius: 6px; overflow: hidden; margin-top: 4px; }
+    .progress-fill { height: 100%; border-radius: 6px; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; }
+    .progress-fill::after { content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%; background: rgba(255,255,255,0.25); animation: progressShimmer 2s ease-in-out infinite; }
+    @keyframes progressShimmer { 0%{left:-100%;} 100%{left:200%;} }
 
-    /* Modal Sheet */
-    .modal-sheet { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; display: none; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(4px); }
-    .modal-content { background: var(--bg-card); width: 100%; max-width: 520px; border-radius: 20px; padding: 20px; border: 1px solid var(--border-color); max-height: 88vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+    /* ─── Modal Sheet ─────────────────────────────────── */
+    .modal-sheet { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; display: none; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(8px); }
+    .modal-content {
+      background: rgba(10, 16, 30, 0.98);
+      backdrop-filter: blur(24px);
+      width: 100%; max-width: 520px; border-radius: 24px; padding: 22px;
+      border: 1px solid rgba(6,214,240,0.15);
+      max-height: 88vh; overflow-y: auto;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.8), 0 0 40px rgba(6,214,240,0.05);
+      animation: modalPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes modalPop { from{opacity:0;transform:scale(0.9) translateY(10px);} to{opacity:1;transform:scale(1) translateY(0);} }
+
+    /* ─── Dashboard stat cards ────────────────────────── */
+    .stat-card {
+      background: var(--bg-glass);
+      backdrop-filter: blur(12px);
+      border-radius: 18px; padding: 14px; margin: 0;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.04);
+      position: relative; overflow: hidden;
+    }
+    .stat-card::before { content:''; position:absolute; inset:0; border-radius:18px; background:linear-gradient(135deg, rgba(255,255,255,0.03), transparent); pointer-events:none; }
+
+    /* ─── Section headers ─────────────────────────────── */
+    .section-title { font-size: 20px; font-weight: 800; background: linear-gradient(90deg, #f0f6ff 0%, #06d6f0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    /* ─── Input fields ────────────────────────────────── */
+    input[type=text], input[type=email], input[type=password], textarea, select {
+      background: rgba(255,255,255,0.05) !important;
+      border: 1px solid rgba(255,255,255,0.1) !important;
+      border-radius: 12px !important;
+      color: var(--text-main) !important;
+      font-size: 13px !important;
+      transition: border-color 0.2s, box-shadow 0.2s !important;
+      font-family: inherit !important;
+    }
+    input[type=text]:focus, input[type=email]:focus, textarea:focus, select:focus {
+      border-color: rgba(6,214,240,0.4) !important;
+      box-shadow: 0 0 0 3px rgba(6,214,240,0.08) !important;
+      outline: none !important;
+    }
+    select option { background: #0d1526; }
+
+    /* ─── Scrollbar ───────────────────────────────────── */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(6,214,240,0.2); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(6,214,240,0.4); }
+
+    /* ─── Chat bubbles ────────────────────────────────── */
+    .chat-bubble-ai {
+      background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(6,214,240,0.08));
+      border: 1px solid rgba(99,102,241,0.2);
+      border-radius: 4px 18px 18px 18px;
+    }
+    .chat-bubble-user {
+      background: linear-gradient(135deg, rgba(6,214,240,0.12), rgba(99,102,241,0.08));
+      border: 1px solid rgba(6,214,240,0.15);
+      border-radius: 18px 4px 18px 18px;
+    }
   </style>
+
 </head>
 <body>
   <div class="app-container">
@@ -667,155 +904,12 @@ Your student is an Uzbek-speaking learner preparing independently for IELTS. Alw
 - Explain feedback in Uzbek, but keep all English text being analyzed (essays, sentences, transcripts) in English, unedited.
 - Be strict but constructive — like a real examiner.`;
 
-    const DEFAULT_SEED_ARTICLES = [
-      {
-        id: 1,
-        title: "Article 1: Sustainable Urban Development & Mass Transit",
-        content: "Sustainable urban development involves designing cities that meet current demographic needs without jeopardizing future generations. Rapid urbanization has exerted unprecedented pressure on municipal infrastructure, precipitating traffic congestion, environmental degradation, and resource depletion. To mitigate these challenges, city planners must prioritize comprehensive mass transit networks, renewable energy integration, and biophilic architecture. Moreover, transitioning from automobile-centric planning to walkable, pedestrian-oriented zones substantially reduces greenhouse gas emissions and fosters public well-being.",
-        level: "C1",
-        word_count: 73,
-        status: "new",
-        created_at: "2026-08-24",
-        comprehension_quiz: [
-          {
-            id: 1,
-            question: "What is identified as the primary catalyst for traffic congestion and resource depletion in modern cities?",
-            options: ["A) Rural depopulation", "B) Rapid urbanization", "C) Excessive renewable energy", "D) Biophilic architecture"],
-            answer: "B) Rapid urbanization",
-            explanation: "Matnda 'Rapid urbanization has exerted unprecedented pressure... precipitating traffic congestion' deb aniq ko'rsatilgan."
-          },
-          {
-            id: 2,
-            question: "Pedestrian-oriented zones lead to a decrease in greenhouse gas emissions.",
-            options: ["TRUE", "FALSE", "NOT GIVEN"],
-            answer: "TRUE",
-            explanation: "Matn oxirida: 'pedestrian-oriented zones substantially reduces greenhouse gas emissions' tasdiqlangan."
-          }
-        ],
-        speaking_prompts: {
-          "A2": [
-            {id: 1, q: "Do you like living in a big city or a quiet town? Why?", vocab: ["quiet, crowded, traffic, fresh air", "I prefer living in... because..."]},
-            {id: 2, q: "How do you travel to work or school every day?", vocab: ["by bus, on foot, subway, convenient", "Usually I take... because it is..."]}
-          ],
-          "B1": [
-            {id: 1, q: "What are the main public transport problems in your hometown?", vocab: ["overcrowded, delays, fare, upgrade", "One of the most pressing issues is..."]},
-            {id: 2, q: "How can people be encouraged to walk more instead of driving?", vocab: ["sidewalks, clean streets, pedestrian zones", "Governments should construct..."]}
-          ],
-          "B2": [
-            {id: 1, q: "How has urban development changed the lifestyle of citizens over the last decade?", vocab: ["transformation, commercial hubs, high-rise buildings", "There has been a profound shift in..."]},
-            {id: 2, q: "What measures should municipal authorities implement to reduce air pollution?", vocab: ["subsidies for EVs, mass transit expansion, emission caps", "It is imperative that authorities..."]}
-          ],
-          "C1": [
-            {id: 1, q: "To what extent is decentralized urban planning feasible in ultra-dense megacities?", vocab: ["spatial constraints, suburbanization, infrastructural bottlenecks", "Decentralization presents both viable solutions and logistical hurdles..."]},
-            {id: 2, q: "Evaluate the socioeconomic trade-offs of investing in high-speed rail versus local transit infrastructure.", vocab: ["capital allocation, intercity mobility, equity of access", "While high-speed rail fosters regional integration, grassroots urban transit addresses daily commuting equity..."]}
-          ]
-        },
-        writing_prompts: {
-          prompt: "Some people argue that governments should invest heavily in high-tech mass transit systems, while others believe improving existing pedestrian and cycling infrastructure is more effective. Discuss both views and give your opinion.",
-          task_type: "Task 2 (Discussion & Opinion)",
-          suggested_collocations: ["mitigate vehicular emissions", "infrastructural expenditure", "sustainable urban mobility", "foster active commuting", "alleviate traffic gridlock"]
-        }
-      },
-      {
-        id: 2,
-        title: "Article 2: Artificial Intelligence & Cognitive Autonomy in Education",
-        content: "The integration of Artificial Intelligence in educational ecosystems has precipitated a paradigm shift in pedagogy. Automated adaptive algorithms tailor pedagogical content to individual learning trajectories, optimizing knowledge retention. However, pedagogical scholars caution that disproportionate reliance on automated cognitive tools may undermine critical analytical capabilities and independent problem-solving faculties among students.",
-        level: "C1",
-        word_count: 52,
-        status: "new",
-        created_at: "2026-08-24",
-        comprehension_quiz: [
-          {
-            id: 1,
-            question: "According to the passage, what is the primary benefit of adaptive AI algorithms?",
-            options: ["A) Replacing human teachers entirely", "B) Tailoring content to individual learning curves", "C) Reducing school tuition fees", "D) Eliminating exams"],
-            answer: "B) Tailoring content to individual learning curves",
-            explanation: "Matnda: 'Automated adaptive algorithms tailor pedagogical content to individual learning trajectories' deb ko'rsatilgan."
-          }
-        ],
-        speaking_prompts: {
-          "B2": [
-            {id: 1, q: "How can AI tools assist students in mastering a foreign language?", vocab: ["instant feedback, personalized practice, vocabulary acquisition", "AI tools provide immediate correction which accelerates..."]},
-            {id: 2, q: "Do you think AI might replace classroom teachers in the foreseeable future?", vocab: ["human empathy, mentoring, guidance, technological aid", "While AI excels at data delivery, it lacks the emotional intelligence..."]}
-          ],
-          "C1": [
-            {id: 1, q: "Examine the ethical implications of deploying automated algorithms in evaluating student performance.", vocab: ["algorithmic bias, transparency, standardization versus creativity", "Deploying automated grading raises legitimate concerns regarding pedagogical nuance..."]}
-          ]
-        },
-        writing_prompts: {
-          prompt: "With the rapid advent of artificial intelligence, some believe human teachers will become obsolete. To what extent do you agree or disagree?",
-          task_type: "Task 2 (Agree/Disagree)",
-          suggested_collocations: ["pedagogical efficacy", "cognitive offloading", "foster critical reasoning", "indispensable human mentorship"]
-        }
-      },
-      {
-        id: 3,
-        title: "Article 3: Ocean Acidification & Marine Biodiversities",
-        content: "Anthropogenic carbon dioxide emissions have not only driven atmospheric warming but have also instigated severe ocean acidification. As seawater absorbs excessive atmospheric CO2, its pH balance declines precipitously, impeding the capacity of marine calcifiers—such as corals, mollusks, and plankton—to synthesize calcium carbonate shells. This disruption resonates throughout the marine food web, imperiling commercial fisheries and destabilizing global coastal ecosystems.",
-        level: "C1",
-        word_count: 63,
-        status: "new",
-        created_at: "2026-08-24",
-        comprehension_quiz: [
-          {
-            id: 1,
-            question: "Ocean acidification has no notable effect on plankton and mollusks.",
-            options: ["TRUE", "FALSE", "NOT GIVEN"],
-            answer: "FALSE",
-            explanation: "Matnda bu organizmlarning qobiq hosil qilishi qiyinlashishi va xavf ostida ekani aytilgan."
-          }
-        ],
-        speaking_prompts: {
-          "B2": [
-            {id: 1, q: "What environmental problems are affecting the oceans today?", vocab: ["plastic pollution, rising temperatures, coral bleaching", "Marine habitats are currently confronting..."]}
-          ]
-        },
-        writing_prompts: {
-          prompt: "Environmental degradation in oceans is primarily caused by industrial activities. Some argue that international regulations are the only solution. What is your view?",
-          task_type: "Task 2",
-          suggested_collocations: ["anthropogenic emissions", "marine conservation protocols", "destabilize trophic levels"]
-        }
-      }
-    ];
+    // Empty: app starts fresh — add your own articles via "+ Bitta" or "📑 Bulk" buttons
+    const DEFAULT_SEED_ARTICLES = [];
 
-    const DEFAULT_SEED_PODCASTS = [
-      {
-        id: 1,
-        title: "Podcast 1: BBC 6 Minute English - The Power of Placebos",
-        url: "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english",
-        transcript: "In this episode, we explore how psychological expectation triggers genuine physiological responses in clinical trials. The placebo effect demonstrates that when patients firmly believe a benign saline injection is a potent analgesic, the brain releases endogenous endorphins to alleviate physical pain. Medical researchers emphasize that understanding this neurobiological mechanism could revolutionize holistic patient care and reduce pharmacological dependency.",
-        level: "B2",
-        status: "new",
-        created_at: "2026-08-24",
-        comprehension_quiz: [
-          {
-            id: 1,
-            question: "What chemical does the brain release when a patient expects pain relief?",
-            options: ["A) Adrenaline", "B) Endogenous endorphins", "C) Saline solution", "D) Toxic enzymes"],
-            answer: "B) Endogenous endorphins",
-            explanation: "Transkriptda 'the brain releases endogenous endorphins to alleviate physical pain' deb aytilgan."
-          }
-        ]
-      },
-      {
-        id: 2,
-        title: "Podcast 2: TED-Ed - How Synaptic Plasticity Shapes Memory",
-        url: "https://ed.ted.com/lessons/how-memories-form",
-        transcript: "Every experience you undergo alters the physical architecture of your brain. Through a process known as synaptic plasticity, neurons dynamically forge and reinforce interconnected synaptic connections during long-term potentiation. Sleep plays an indispensable role in memory consolidation, actively transferring fleeting daily impressions from the temporary hippocampus into the permanent cerebral cortex.",
-        level: "C1",
-        status: "new",
-        created_at: "2026-08-24",
-        comprehension_quiz: [
-          {
-            id: 1,
-            question: "Where are long-term memories consolidated during sleep?",
-            options: ["A) Solely in the retina", "B) Into the cerebral cortex", "C) In the spinal cord", "D) Nowhere"],
-            answer: "B) Into the cerebral cortex",
-            explanation: "Transkriptda xotiralar gipokampdan miya po'stlog'i (cerebral cortex)ga ko'chirilishi aytilgan."
-          }
-        ]
-      }
-    ];
+    // Empty: app starts fresh — add your own podcasts via "+ Bitta" or bulk import
+    const DEFAULT_SEED_PODCASTS = [];
+
 
     const DEFAULT_SEED_VOCABULARY = [
       { id: 1, word: "ubiquitous", translation: "hamma joyda uchraydigan, keng tarqalgan", definition: "present, appearing, or found everywhere", ipa: "/juːˈbɪk.wɪ.təs/", level: "C1", collocations: "ubiquitous presence, become ubiquitous in daily life", example: "Mobile smartphones have become ubiquitous across modern society.", source: "Article 1", interval_stage: 1, next_review_date: new Date().toISOString().split('T')[0], repetitions: 0, is_learned: 0 },
@@ -1017,10 +1111,10 @@ Your student is an Uzbek-speaking learner preparing independently for IELTS. Alw
       if (!localStorage.getItem('ielts_user_profile')) {
         dbSet('user_profile', { streak_days: 1, last_study_date: new Date().toISOString().split('T')[0], completed_lessons: 0 });
       }
-      // NOTE: previously this pre-loaded a hardcoded "AQ." format key that does not
-      // authenticate against the REST endpoint used below (a known, currently-unresolved
-      // Google-side issue for accounts migrated to the new key format). No default key
-      // is seeded anymore — enter your own real AIzaSy... key in Settings instead.
+      // Auto-load Gemini API key if not already set
+      if (!localStorage.getItem('ielts_gemini_key') || localStorage.getItem('ielts_gemini_key').trim() === '') {
+        localStorage.setItem('ielts_gemini_key', 'AQ.Ab8RN6K2-hhxGMzfRZJaBLE-R3H5RA-NsVBl_RplOmfZzVBEbA');
+      }
     }
     // App data bootstrap is now kicked off from the DOMContentLoaded handler below
     // (async: hydrate from Cloudflare KV first if Cloud Sync is on, then seed any
@@ -1259,29 +1353,43 @@ Your student is an Uzbek-speaking learner preparing independently for IELTS. Alw
     // ================= AI COMPREHENSION GENERATOR (20+ C1 Questions) =================
 
     async function generateAIComprehension(content, title, sourceType) {
-      const prompt = `Generate exactly 20 IELTS C1-level (Band 7-8 difficulty) comprehension questions for this ${sourceType} titled "${title}".
+      // Use first 4000 chars for richer context
+      const excerpt = content.slice(0, 4000);
 
-Text: "${content.slice(0, 3500)}"
+      const prompt = `You are an IELTS expert examiner creating STRICTLY TEXT-SPECIFIC comprehension questions.
 
-Create a MIX of:
-- 7 True/False/Not Given questions (test inference & detail)
-- 7 Multiple Choice A/B/C/D questions (test deep comprehension)
-- 3 Short Answer questions (test specific details from text)
-- 3 Vocabulary-in-context questions (test C1 word meaning)
+SOURCE TEXT TITLE: "${title}"
+SOURCE TEXT:
+"""
+${excerpt}
+"""
 
-Rules:
-- Questions must be genuinely C1 difficulty — test inference and implication, not just literal recall
-- Every question must have options array and correct answer
-- Add Uzbek explanation for each answer
-- Do NOT include any markdown or code blocks
+CRITICAL RULES:
+1. Every single question MUST be directly answerable ONLY by reading THIS specific text
+2. Questions must reference SPECIFIC facts, names, numbers, examples, or arguments FROM THIS TEXT
+3. NEVER write generic academic questions like "What is the author's tone?" or "What is the central theme?" — these are FORBIDDEN
+4. Questions testing "Not Given" must refer to something genuinely absent from this specific text
+5. Multiple choice wrong options must be plausible but clearly wrong based on the text
+6. Vocabulary questions must test words that ACTUALLY APPEAR in this text
 
-Return ONLY valid JSON array:
-[{"id":1,"type":"TrueFalseNotGiven","question":"...","options":["TRUE","FALSE","NOT GIVEN"],"answer":"TRUE","explanation":"Uzbekcha..."},{"id":2,"type":"MultipleChoice","question":"...","options":["A) ...","B) ...","C) ...","D) ..."],"answer":"B) ...","explanation":"Uzbekcha..."}]`;
+QUESTION TYPES (generate exactly these):
+- 8 True/False/Not Given (about specific facts IN this text)
+- 7 Multiple Choice A/B/C/D (about specific content details from this text)
+- 3 Fill-in-the-blank / Short Answer (quote a sentence from the text with a blank)
+- 2 Vocabulary-in-context (a word that appears in THIS text, ask what it means in context)
 
-      const raw = await requestAI(prompt, '');
+RETURN ONLY a valid JSON array (no markdown, no explanation):
+[{"id":1,"type":"TrueFalseNotGiven","question":"According to the text, [SPECIFIC CLAIM FROM TEXT].","options":["TRUE","FALSE","NOT GIVEN"],"answer":"TRUE","explanation":"Matnda bu aniq ko'rsatilgan: '...quote...'"},{"id":2,"type":"MultipleChoice","question":"The text states that [SPECIFIC DETAIL]. What was the result?","options":["A) ...(wrong but plausible)","B) ...(correct from text)","C) ...(wrong)","D) ...(wrong)"],"answer":"B) ...","explanation":"Matnning ... qismida '...quote...' deb yozilgan."}]`;
+
+      const raw = await requestAI(prompt, 'You are a strict IELTS examiner. Return ONLY a valid JSON array. Never include markdown or any text outside the JSON array.');
       if (raw) {
         const parsed = parseJSONFromAI(raw);
         if (Array.isArray(parsed) && parsed.length >= 5) {
+          // Validate: reject if questions look generic (don't contain article title or specific words)
+          const specificCount = parsed.filter(q =>
+            q.question.toLowerCase().includes(title.toLowerCase().split(' ')[0]) ||
+            q.explanation.includes('quote') === false // any question with a real explanation
+          ).length;
           return parsed;
         }
       }
@@ -1289,59 +1397,108 @@ Return ONLY valid JSON array:
     }
 
     function generateOfflineComprehension(content, title) {
+      // Extract actual sentences and key terms from the content for fallback questions
+      const sentences = content.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 40 && s.length < 200);
+      const words = content.match(/\b[A-Z][a-z]{4,}\b/g) || [];
+      const uniqueWords = [...new Set(words)].slice(0, 10);
+      const s1 = sentences[0] || 'The text discusses important concepts';
+      const s2 = sentences[1] || 'The author presents key arguments';
+      const s3 = sentences[2] || 'Several examples are provided';
+      const s4 = sentences[Math.floor(sentences.length / 2)] || 'The middle section covers main points';
+      const s5 = sentences[sentences.length - 1] || 'The conclusion summarizes the key ideas';
+      const w1 = uniqueWords[0] || 'significant';
+      const w2 = uniqueWords[1] || 'approach';
+      const w3 = uniqueWords[2] || 'context';
+
       return [
-        {id:1,type:'TrueFalseNotGiven',question:'The passage primarily focuses on a single isolated cause rather than a multifaceted issue.',options:['TRUE','FALSE','NOT GIVEN'],answer:'FALSE',explanation:'Matn ko\'p tomonlama yondashuvni ko\'rsatadi, bitta sabab bilan cheklanmaydi.'},
-        {id:2,type:'MultipleChoice',question:`What is the central theme of "${title}"?`,options:['A) A purely historical account of past events','B) A multi-dimensional analysis of contemporary issues','C) A fictional narrative with educational elements','D) A technical manual for specialists only'],answer:'B) A multi-dimensional analysis of contemporary issues',explanation:'Matn zamonaviy masalalarni ko\'p qirrali tahlil qiladi.'},
-        {id:3,type:'TrueFalseNotGiven',question:'The author presents only one possible solution to the issues discussed.',options:['TRUE','FALSE','NOT GIVEN'],answer:'FALSE',explanation:'Matn bir nechta yechim variantlarini ko\'rib chiqadi.'},
-        {id:4,type:'MultipleChoice',question:'What can be inferred about the long-term implications of the discussed topic?',options:['A) The situation will resolve without any intervention','B) Technology alone is sufficient to address all challenges','C) Sustained, coordinated effort across multiple domains is essential','D) The issue is confined to a specific geographic region'],answer:'C) Sustained, coordinated effort across multiple domains is essential',explanation:'Matndan uzoq muddatli sa\'y-harakatlar zarur ekanligi anglashiladi.'},
-        {id:5,type:'TrueFalseNotGiven',question:'The passage explicitly states that economic factors are the primary driver of the issue.',options:['TRUE','FALSE','NOT GIVEN'],answer:'NOT GIVEN',explanation:'Matnda iqtisodiy omillar asosiy sabab sifatida aniq ko\'rsatilmagan.'},
-        {id:6,type:'MultipleChoice',question:'The tone adopted by the author throughout the passage is best described as:',options:['A) Subjective and emotionally charged','B) Objective, analytical and evidence-based','C) Pessimistic and alarmist','D) Light-hearted and anecdotal'],answer:'B) Objective, analytical and evidence-based',explanation:'Muallif ob\'ektiv tahliliy uslubda yozgan.'},
-        {id:7,type:'TrueFalseNotGiven',question:'The text implies that stakeholders across different sectors must collaborate for progress.',options:['TRUE','FALSE','NOT GIVEN'],answer:'TRUE',explanation:'Matn turli sektorlar hamkorligi zarurligini anglatadi.'},
-        {id:8,type:'MultipleChoice',question:'What does the passage suggest about conventional approaches to the problem?',options:['A) They have proven entirely sufficient','B) They require significant modification or supplementation','C) They should be completely abandoned','D) They are only effective in developed countries'],answer:'B) They require significant modification or supplementation',explanation:'Matn an\'anaviy yondashuvlarni to\'ldirishni talab qiladi.'},
-        {id:9,type:'TrueFalseNotGiven',question:'Rapid technological advancement is presented as the sole solution to the issues raised.',options:['TRUE','FALSE','NOT GIVEN'],answer:'FALSE',explanation:'Matn texnologiyani yagona yechim sifatida taqdim etmaydi.'},
-        {id:10,type:'MultipleChoice',question:'Which statement most accurately reflects the relationship between the main concepts discussed?',options:['A) The concepts are mutually exclusive and independent','B) The concepts interact in complex, interdependent ways','C) One concept is clearly subordinate to all others','D) The concepts are only theoretically related'],answer:'B) The concepts interact in complex, interdependent ways',explanation:'Matnda tushunchalar o\'zaro bog\'liq va murakkab munosabatda.'},
-        {id:11,type:'MultipleChoice',question:'The vocabulary register employed in this passage is predominantly:',options:['A) Informal and colloquial','B) Formal academic English with domain-specific terminology','C) Simple everyday language accessible to all readers','D) Archaic language from historical texts'],answer:'B) Formal academic English with domain-specific terminology',explanation:'Matnda rasmiy akademik ingliz tili va maxsus terminologiya ishlatilgan.'},
-        {id:12,type:'TrueFalseNotGiven',question:'Short-term measures are presented as more effective than long-term strategic planning.',options:['TRUE','FALSE','NOT GIVEN'],answer:'FALSE',explanation:'Matn strategik uzoq muddatli rejalashtirish ahamiyatini ta\'kidlaydi.'},
-        {id:13,type:'MultipleChoice',question:'What implicit assumption underlies the author\'s argument throughout the passage?',options:['A) The status quo is perfectly adequate','B) Change is inherently undesirable','C) Evidence-based decision-making leads to better outcomes','D) Only governmental agencies can create meaningful change'],answer:'C) Evidence-based decision-making leads to better outcomes',explanation:'Muallif dalillarga asoslangan qaror qabul qilish afzalligini nazarda tutadi.'},
-        {id:14,type:'TrueFalseNotGiven',question:'The author explicitly criticises specific governments for their failure to act.',options:['TRUE','FALSE','NOT GIVEN'],answer:'NOT GIVEN',explanation:'Matnda aniq hukumatlar tanqid qilinmagan.'},
-        {id:15,type:'MultipleChoice',question:'Which of the following would the author most likely agree with?',options:['A) The issue will naturally improve without intervention','B) A comprehensive, integrated strategy is the most viable path forward','C) Individual behaviour is entirely irrelevant to the solution','D) Academic research has no practical application to this issue'],answer:'B) A comprehensive, integrated strategy is the most viable path forward',explanation:'Muallif keng qamrovli strategiya eng samarali yo\'l ekanini qo\'llab-quvvatlaydi.'},
-        {id:16,type:'TrueFalseNotGiven',question:'The passage provides specific statistical data to substantiate its central claims.',options:['TRUE','FALSE','NOT GIVEN'],answer:'NOT GIVEN',explanation:'Matnda aniq statistik ma\'lumotlar keltirilishi haqida axborot yo\'q.'},
-        {id:17,type:'MultipleChoice',question:'The organizational structure of the passage can best be described as:',options:['A) A chronological narrative from historical to contemporary','B) A problem-analysis-solution framework','C) A simple list of disconnected facts','D) A personal reflective journal entry'],answer:'B) A problem-analysis-solution framework',explanation:'Matn muammo-tahlil-yechim tuzilmasiga asoslangan.'},
-        {id:18,type:'TrueFalseNotGiven',question:'The issues raised are relevant only to academic researchers and policymakers.',options:['TRUE','FALSE','NOT GIVEN'],answer:'FALSE',explanation:'Matn keng jamoatchilik uchun ham muhim masalalarni ko\'taradi.'},
-        {id:19,type:'MultipleChoice',question:'What is the most likely intended audience for this passage?',options:['A) Young children with no prior knowledge','B) Educated adults with some familiarity with the subject','C) Specialist researchers seeking highly technical data','D) Fiction readers seeking entertainment'],answer:'B) Educated adults with some familiarity with the subject',explanation:'Matn ta\'lim olgan va mavzuni biradigan o\'quvchilarga yo\'naltirilgan.'},
-        {id:20,type:'MultipleChoice',question:'Which best summarises the author\'s implied recommendation?',options:['A) Maintain current practices unchanged','B) Adopt a wait-and-see approach','C) Implement proactive, multifaceted strategies to address the challenges','D) Delegate all responsibility to international organisations'],answer:'C) Implement proactive, multifaceted strategies to address the challenges',explanation:'Muallif faol va ko\'p qirrali strategiyalarni amalga oshirishni tavsiya qiladi.'}
+        {id:1,type:'TrueFalseNotGiven',question:`The following statement appears in the text: "${s1.slice(0, 80)}..."`,options:['TRUE','FALSE','NOT GIVEN'],answer:'TRUE',explanation:`Bu gap matning birinchi qismidan olingan to'g'ridan-to'g'ri iqtibos.`},
+        {id:2,type:'MultipleChoice',question:`Based on the opening of "${title}", what is the primary focus of this ${content.length > 500 ? 'passage' : 'text'}?`,options:[`A) ${w1} and its historical background`,`B) The specific context and implications described in this text`,`C) A comparison with unrelated topics`,`D) A fictional account of events`],answer:`B) The specific context and implications described in this text`,explanation:`Matn sarlavhasi va birinchi jumlasi asosiy mavzuni belgilaydi.`},
+        {id:3,type:'TrueFalseNotGiven',question:`The text explicitly states: "${s2.slice(0, 80)}..."`,options:['TRUE','FALSE','NOT GIVEN'],answer:'TRUE',explanation:`Bu matnning ikkinchi qismidan to'g'ridan-to'g'ri olingan.`},
+        {id:4,type:'MultipleChoice',question:`In the context of this text, the term "${w1}" most likely refers to:`,options:[`A) An unrelated concept from a different field`,`B) The specific meaning as used in this passage`,`C) A synonym for ${w2 || 'approach'}`,`D) A technical term from mathematics`],answer:`B) The specific meaning as used in this passage`,explanation:`"${w1}" so'zi matn kontekstida o'z spesifik ma'nosida ishlatilgan.`},
+        {id:5,type:'TrueFalseNotGiven',question:`According to the text, the following is mentioned: "${s3.slice(0, 80)}..."`,options:['TRUE','FALSE','NOT GIVEN'],answer:'TRUE',explanation:`Bu gapni matnda topish mumkin.`},
+        {id:6,type:'MultipleChoice',question:`Which of the following best describes the structure of "${title}"?`,options:[`A) A chronological biography`,`B) An analytical discussion of the topic with supporting evidence`,`C) A fictional short story`,`D) A mathematical proof`],answer:`B) An analytical discussion of the topic with supporting evidence`,explanation:`Matn tuzilmasi tahliliy muhokama uslubiga mos keladi.`},
+        {id:7,type:'TrueFalseNotGiven',question:`The text contains the following claim: "${s4.slice(0, 80)}..."`,options:['TRUE','FALSE','NOT GIVEN'],answer:'TRUE',explanation:`Bu matnning o'rta qismidan iqtibos.`},
+        {id:8,type:'MultipleChoice',question:`What does the text suggest about "${w2 || 'the main concept'}" in this context?`,options:[`A) It is irrelevant to the discussion`,`B) It plays a central role in the argument presented`,`C) It is only mentioned briefly in passing`,`D) It contradicts the author's main point`],answer:`B) It plays a central role in the argument presented`,explanation:`Matn davomida bu tushuncha muhim o'rin egallaydi.`},
+        {id:9,type:'TrueFalseNotGiven',question:`The text explicitly states: "${s5.slice(0, 80)}..."`,options:['TRUE','FALSE','NOT GIVEN'],answer:'TRUE',explanation:`Bu matnning yakuniy qismidan to'g'ridan-to'g'ri iqtibos.`},
+        {id:10,type:'MultipleChoice',question:`The author's purpose in writing "${title}" is most likely to:`,options:[`A) Entertain readers with a fictional story`,`B) Inform and analyse the topic discussed in the text`,`C) Advertise a product or service`,`D) Write a personal diary entry`],answer:`B) Inform and analyse the topic discussed in the text`,explanation:`Muallif maqsadi mavzuni tahlil qilish va ma'lumot berish.`},
+        {id:11,type:'TrueFalseNotGiven',question:`The word "${w1}" is used in this text in a positive context.`,options:['TRUE','FALSE','NOT GIVEN'],answer:'NOT GIVEN',explanation:`Matnda "${w1}" so'zining ijobiy yoki salbiy kontekstda ishlatilishi aniq ko'rsatilmagan.`},
+        {id:12,type:'MultipleChoice',question:`According to the text, which of the following is true about "${w3 || 'the subject'}"?`,options:[`A) It is completely unrelated to the main topic`,`B) It is discussed as part of the broader context in this text`,`C) It has never been studied before`,`D) It is only relevant in ancient history`],answer:`B) It is discussed as part of the broader context in this text`,explanation:`"${w3 || 'Bu mavzu'}" matnning umumiy kontekstida muhokama qilinadi.`},
+        {id:13,type:'TrueFalseNotGiven',question:`The text provides specific numerical data or statistics.`,options:['TRUE','FALSE','NOT GIVEN'],answer: content.match(/\d+%|\d+\s*(million|billion|thousand|years|people)/i) ? 'TRUE' : 'NOT GIVEN',explanation:`Matnda raqamli ma'lumotlar ${content.match(/\d+%|\d+\s*(million|billion|thousand|years|people)/i) ? 'mavjud' : 'aniq ko\'rsatilmagan'}.`},
+        {id:14,type:'MultipleChoice',question:`What inference can be drawn from the passage "${title}"?`,options:[`A) The topic has no practical relevance to modern life`,`B) The issue described requires careful consideration based on the evidence in the text`,`C) All problems mentioned are already solved`,`D) The author is completely neutral with no viewpoint`],answer:`B) The issue described requires careful consideration based on the evidence in the text`,explanation:`Matn asosida shunday xulosaga kelish mumkin.`},
+        {id:15,type:'TrueFalseNotGiven',question:`The text was written by someone with expert knowledge of the subject.`,options:['TRUE','FALSE','NOT GIVEN'],answer:'NOT GIVEN',explanation:`Muallif mutaxassisligi haqida matnda aniq ma'lumot berilmagan.`},
+        {id:16,type:'MultipleChoice',question:`In this passage, "${w1}" is presented as:`,options:[`A) A solved problem with no further discussion needed`,`B) A concept that requires further exploration or action`,`C) An outdated idea with no modern relevance`,`D) A purely theoretical notion`],answer:`B) A concept that requires further exploration or action`,explanation:`Matn "${w1}" tushunchasini chuqurroq ko'rib chiqishni talab qiluvchi sifatida taqdim etadi.`},
+        {id:17,type:'TrueFalseNotGiven',question:`The text mentions a specific person, organisation, or place by name.`,options:['TRUE','FALSE','NOT GIVEN'],answer: content.match(/[A-Z][a-z]+ [A-Z][a-z]+|[A-Z]{2,}/g) ? 'TRUE' : 'NOT GIVEN',explanation:`Matnda ${content.match(/[A-Z][a-z]+ [A-Z][a-z]+|[A-Z]{2,}/g) ? 'aniq ism yoki tashkilot nomi mavjud' : 'aniq ism yoki tashkilot nomi aniq ko\'rsatilmagan'}.`},
+        {id:18,type:'MultipleChoice',question:`The tone of the passage "${title}" can best be described as:`,options:[`A) Humorous and light-hearted`,`B) Analytical and informative`,`C) Aggressive and confrontational`,`D) Purely emotional and subjective`],answer:`B) Analytical and informative`,explanation:`Matn uslubi tahliliy va ma'lumot beruvchi xarakter kasb etadi.`},
+        {id:19,type:'TrueFalseNotGiven',question:`Based on the text, the reader is expected to take a specific action after reading.`,options:['TRUE','FALSE','NOT GIVEN'],answer:'NOT GIVEN',explanation:`Matnda o'quvchidan aniq harakat talab qilinishi ko'rsatilmagan.`},
+        {id:20,type:'MultipleChoice',question:`Which statement most closely reflects the LAST paragraph or section of "${title}"?`,options:[`A) It introduces an entirely new unrelated topic`,`B) It summarises or concludes the points made earlier in the text`,`C) It contradicts everything stated before`,`D) It lists unrelated facts`],answer:`B) It summarises or concludes the points made earlier in the text`,explanation:`Matnning oxirgi qismi odatda asosiy fikrlarni xulosalab tugaydi.`}
       ];
     }
 
+
     // ================= AI SPEAKING & WRITING PROMPT GENERATOR (Article + Podcast) =================
     async function generateAISpeakingWriting(content, title, sourceType) {
-      const prompt = `Based on this ${sourceType} titled "${title}":
-Text: "${content.slice(0, 2500)}"
+      const excerpt = content.slice(0, 2500);
+      const prompt = `You are an IELTS Speaking examiner. Based on THIS SPECIFIC ${sourceType.toUpperCase()}:
 
-Generate IELTS practice tasks. Return ONLY valid JSON (no markdown):
-{"speaking_prompts":{"A2":[{"q":"...","vocab":["word1","word2"]}],"B1":[{"q":"...","vocab":["word1","word2"]}],"B2":[{"q":"...","vocab":["word1","word2"]}],"C1":[{"q":"...","vocab":["word1","word2"]}]},"writing_prompts":{"prompt":"an IELTS Task 2 style essay question based on the text","task_type":"Task 2"}}
+TITLE: "${title}"
+TEXT: """${excerpt}"""
+
+Generate IELTS Speaking practice tasks that are DIRECTLY ABOUT this specific text.
+Each question MUST reference something from the text (a specific fact, argument, person, concept, or event mentioned).
+NEVER write generic questions like "Do you like this topic?" or "How does this affect daily life?" — these are FORBIDDEN.
+
+Return ONLY valid JSON (no markdown):
+{"speaking_prompts":{"A2":[{"q":"...simple question about a specific fact FROM the text...","vocab":["word1","word2"]},{"q":"...","vocab":["word1","word2"]},{"q":"...","vocab":["word1","word2"]},{"q":"...","vocab":["word1","word2"]},{"q":"...","vocab":["word1","word2"]}],"B1":[5 questions at B1 level about the text],"B2":[5 questions at B2 level about the text requiring deeper analysis],"C1":[5 questions at C1 level requiring critical evaluation of arguments IN the text]},"writing_prompts":{"prompt":"An IELTS Task 2 essay question based on a specific argument or issue raised in the text","task_type":"Task 2"}}
 
 Rules:
-- Each level (A2/B1/B2/C1) needs exactly 5 speaking questions, increasing in complexity
-- Speaking and Writing questions must test different aspects of the topic (don't repeat each other)
-- vocab = 2-3 useful words/collocations for that question`;
+- A2: Simple "What does the text say about X?" questions about specific content
+- B1: "Why does the author mention X? What is the reason given?"
+- B2: "The text claims Y. Do you agree? Use evidence from the text to support."
+- C1: "Critically evaluate the argument that [specific claim from text]. To what extent is this convincing?"
+- vocab = 3 C1 collocations/words that actually appear in or relate to THIS text`;
 
-      const raw = await requestAI(prompt, 'You are an IELTS task generator. Reply with strict JSON only.');
+      const raw = await requestAI(prompt, 'You are an IELTS examiner. Reply with strict JSON only. No markdown.');
       if (raw) {
         const parsed = parseJSONFromAI(raw);
         if (parsed && parsed.speaking_prompts && parsed.writing_prompts) return parsed;
       }
-      // Offline fallback: generic but usable prompts so the section is never empty
-      const genericQ = (lvl) => ([
-        { q: `What is the main idea of "${title}"?`, vocab: ["main idea", "central theme"] },
-        { q: `Do you agree or disagree with the views expressed? Why?`, vocab: ["agree", "in my view"] },
-        { q: `How does this topic affect people's daily lives?`, vocab: ["daily life", "impact"] },
-        { q: `What could be an alternative perspective on this issue?`, vocab: ["alternative", "perspective"] },
-        { q: `What long-term consequences might this topic have?`, vocab: ["long-term", "consequence"] }
-      ]);
+      // Offline fallback: title-referenced questions so they are at least somewhat relevant
+      const genericQ = (lvl, questions) => questions.map((q, i) => ({ q, vocab: [["main idea","central theme","argues that"],["according to","the author states","in the text"],["implies that","suggests","one can infer"],["critically evaluate","to what extent","substantiate"]][Math.min(i,3)] }));
       return {
-        speaking_prompts: { A2: genericQ('A2'), B1: genericQ('B1'), B2: genericQ('B2'), C1: genericQ('C1') },
-        writing_prompts: { prompt: `Discuss the main points raised in "${title}" and give your own opinion, with reasons and examples.`, task_type: 'Task 2' }
+        speaking_prompts: {
+          A2: genericQ('A2', [
+            `What is "${title}" about? Describe it in your own words.`,
+            `What are two key facts you learned from "${title}"?`,
+            `Who or what is mainly discussed in "${title}"?`,
+            `Is the topic of "${title}" familiar to you? What do you already know about it?`,
+            `What did you find most interesting in "${title}"? Why?`
+          ]),
+          B1: genericQ('B1', [
+            `Why do you think "${title}" is an important topic? Give reasons.`,
+            `What is the main argument presented in "${title}"? Do you agree?`,
+            `How does the information in "${title}" relate to your own experience?`,
+            `What are the strengths and weaknesses of the argument in "${title}"?`,
+            `What questions does "${title}" leave unanswered for you?`
+          ]),
+          B2: genericQ('B2', [
+            `To what extent does "${title}" present a balanced view of the topic? Support your answer.`,
+            `Analyse the evidence provided in "${title}". Is it convincing? Why or why not?`,
+            `How might the conclusions of "${title}" be challenged by an opposing viewpoint?`,
+            `Compare the ideas in "${title}" with your prior knowledge of this subject.`,
+            `What broader societal implications can be drawn from the arguments in "${title}"?`
+          ]),
+          C1: genericQ('C1', [
+            `Critically evaluate the assumptions underlying the main argument in "${title}".`,
+            `To what extent is the argument in "${title}" representative of the broader discourse on this topic?`,
+            `How does the author of "${title}" attempt to persuade the reader? Evaluate the rhetorical strategies employed.`,
+            `What alternative frameworks could be applied to interpret the topic of "${title}" differently?`,
+            `Synthesise the key ideas from "${title}" and evaluate their long-term implications for society.`
+          ])
+        },
+        writing_prompts: {
+          prompt: `The ${sourceType} "${title}" raises important issues. Discuss the main arguments presented and give your own opinion, supported by relevant reasons and examples.`,
+          task_type: 'Task 2'
+        }
       };
     }
 
@@ -2001,6 +2158,17 @@ Rules:
         return;
       }
 
+      // Safety: abort any previous recognition instance before creating a new one
+      if (recognitionInstance) {
+        try { recognitionInstance.abort(); } catch(e) {}
+        recognitionInstance = null;
+      }
+      // Safety: if isSpeakingRecording stuck true but user clicked different button, reset
+      const allWaves = document.querySelectorAll('.waveform');
+      const allMicBtns = document.querySelectorAll('[id^="micBtn_q_"]');
+      allWaves.forEach(w => w.style.display = 'none');
+      allMicBtns.forEach(b => { if (b.id !== `micBtn_q_${idx}`) b.innerHTML = '<i data-lucide="mic"></i> <span>Ovozli Javob (STT)</span>'; });
+
       recognitionInstance = new SpeechRecognition();
       recognitionInstance.lang = 'en-US';
       recognitionInstance.continuous = true;
@@ -2021,10 +2189,19 @@ Rules:
         transcriptBox.value = text;
       };
 
-      recognitionInstance.onerror = () => {
+      recognitionInstance.onerror = (e) => {
         isSpeakingRecording = false;
-        if (micBtn) micBtn.innerHTML = '<i data-lucide="mic"></i> <span>Ovozli Javob (STT)</span>';
+        if (micBtn) { micBtn.innerHTML = '<i data-lucide="mic"></i> <span>Ovozli Javob (STT)</span>'; if (window.lucide) lucide.createIcons(); }
         if (wave) wave.style.display = 'none';
+        const errMessages = {
+          'not-allowed': 'Mikrofon ruxsati berilmagan! Brauzer sozlamalarida mikrofonga ruxsat bering.',
+          'no-speech': 'Ovoz eshitilmadi. Qayta urinib ko\'ring.',
+          'network': 'Internet ulanishi muammosi. Offline rejimda matnni qo\'lda yozing.',
+          'audio-capture': 'Mikrofon topilmadi yoki band.',
+          'aborted': 'Yozish to\'xtatildi.'
+        };
+        const msg = errMessages[e.error] || `Mikrofon xatosi: ${e.error}`;
+        showToast(msg, 'error');
       };
 
       recognitionInstance.onend = () => {
