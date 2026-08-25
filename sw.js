@@ -1,51 +1,80 @@
-const CACHE_NAME = 'ielts-ai-master-v10';
-const ASSETS = [
-  './',
-  'css/app.css?v=10.0',
-  'js/app.js?v=10.0',
-  'js/article.js?v=10.0',
-  'js/podcast.js?v=10.0',
-  'js/dictation.js?v=10.0',
-  'js/vocabulary.js?v=10.0',
-  'js/mistakes.js?v=10.0',
-  'js/sentences.js?v=10.0',
-  'js/study_plan.js?v=10.0',
-  'js/settings.js?v=10.0',
-  'js/bug_fixer.js?v=10.0',
-  'js/coach.js?v=10.0'
+// IELTS AI Master - Service Worker
+// Offline support va caching
+
+const CACHE_NAME = 'ielts-ai-master-v1';
+const STATIC_ASSETS = [
+  '/',
+  '/index.html',
+  '/manifest.json',
+  '/icon-192.png',
+  '/icon-512.png'
 ];
 
-self.addEventListener('install', event => {
+// Install: cache static assets
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(STATIC_ASSETS);
+    })
+  );
   self.skipWaiting();
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
-  );
 });
 
-self.addEventListener('activate', event => {
+// Activate: clean old caches
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.map(k => {
-        if (k !== CACHE_NAME) return caches.delete(k);
-      })
-    )).then(() => self.clients.claim())
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames
+          .filter((name) => name !== CACHE_NAME)
+          .map((name) => caches.delete(name))
+      );
+    })
   );
+  self.clients.claim();
 });
 
-self.addEventListener('fetch', event => {
+// Fetch: network first, fallback to cache
+self.addEventListener('fetch', (event) => {
+  // Skip API requests (let them go to network)
   if (event.request.url.includes('/api/')) {
-    event.respondWith(fetch(event.request));
-  } else {
-    event.respondWith(
-      fetch(event.request)
-        .then(response => {
-          if (response && response.status === 200) {
-            const respClone = response.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put(event.request, respClone));
-          }
-          return response;
-        })
-        .catch(() => caches.match(event.request))
-    );
+    return;
   }
+  
+  // Skip external requests (Google Fonts, Lucide, etc.)
+  if (!event.request.url.startsWith(self.location.origin)) {
+    return;
+  }
+
+  event.respondWith(
+    fetch(event.request)
+      .then((response) => {
+        // Clone the response
+        const responseToCache = response.clone();
+        
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, responseToCache);
+        });
+        
+        return response;
+      })
+      .catch(() => {
+        // If network fails, try cache
+        return caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          
+          // If not in cache, return offline page for navigation requests
+          if (event.request.mode === 'navigate') {
+            return caches.match('/index.html');
+          }
+          
+          return new Response('Offline', {
+            status: 503,
+            statusText: 'Service Unavailable'
+          });
+        });
+      })
+  );
 });
