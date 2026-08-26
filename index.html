@@ -495,5 +495,11 @@ function resetDatabaseConfirm(){if(confirm('Hammasi o\'chirilsinmi?')){localStor
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 window.addEventListener('DOMContentLoaded',async()=>{await hydrateFromCloud();initClientDB();navigateTo('dashboard');refreshIcons()});
 </script>
+  <script>
+/* ===== SYNC FIX: xatolarni yashirmaydi ===== */
+async function syncKeyToCloud(k,v){var t=localStorage.getItem("ielts_sync_token");if(!t)return{ok:false,err:"token yo'q"};try{var r=await fetch("/api/kv/"+k,{method:"PUT",headers:{"Authorization":"Bearer "+t,"Content-Type":"application/json"},body:JSON.stringify(v)});if(!r.ok)return{ok:false,err:"HTTP "+r.status};return{ok:true}}catch(e){return{ok:false,err:e.message}}}
+async function syncToCloud(){var t=localStorage.getItem("ielts_sync_token");if(!t){showToast("Sync Token kiriting!","error");return}showToast("Yuklanmoqda...","info");var ok=0,fail=0,err="";var keys=["articles","podcasts","vocab","sentences","study_plans","mistakes","user_profile"];for(var i=0;i<keys.length;i++){var v=dbGet(keys[i]);if(v){var r=await syncKeyToCloud(keys[i],v);if(r.ok)ok++;else{fail++;err=r.err}}}if(fail)showToast("⚠️ Sync XATO: "+err+" — "+fail+" ta yuborilmadi","error");else showToast("☁️ "+ok+" ta bo'lim bulutga yuklandi!","success")}
+async function hydrateFromCloud(){if(localStorage.getItem("ielts_cloud_sync_enabled")!=="1")return;var t=localStorage.getItem("ielts_sync_token");if(!t)return;var pulled=0;var keys=["articles","podcasts","vocab","sentences","study_plans","mistakes","user_profile"];for(var i=0;i<keys.length;i++){try{var r=await fetch("/api/kv/"+keys[i],{headers:{"Authorization":"Bearer "+t}});if(!r.ok){showToast("☁️ Olish xatosi: HTTP "+r.status,"error");return}var d=await r.json();if(d.value){var p=JSON.parse(d.value),l=dbGet(keys[i]);if(Array.isArray(p)&&(!l||p.length>l.length)){dbSet(keys[i],p);pulled++}}}catch(e){}}if(pulled)showToast("☁️ Bulutdan "+pulled+" ta bo'lim olindi!","success")}
+</script>
 </body>
 </html>
