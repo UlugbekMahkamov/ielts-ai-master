@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ielts-ai-master-v3';
+const CACHE_NAME = 'ielts-ai-master-v4';
 self.addEventListener('install', (e) => {
   self.skipWaiting();
 });
